@@ -1,0 +1,39 @@
+idea 1 - Dairy Direct – Direct-to-Consumer Dairy Ordering Platform
+
+Problem
+
+Small and medium dairy farms often sell their products to end customers in an unorganized way (WhatsApp, phone calls, middlemen).
+Customers who want fresh, traceable dairy products don’t know which farms are available, what they offer, or how to order reliably.
+This leads to missed demand, potential waste on the farm side, and a poor experience on the customer side.
+
+Target Audience
+
+Small and medium dairy farms that want to sell directly to consumers.
+
+End customers (families and individuals) looking for fresh dairy products from trusted farms.
+
+Proposed Solution (MVP Concept)
+
+A web platform that connects dairy farms directly with end consumers:
+
+Customers can browse nearby farms, see available products (milk, laban, cheese, etc.), place orders, and choose delivery or pick-up.
+
+Farms can manage daily/weekly orders, set capacity limits per day, and see which areas/products have the highest demand.
+
+An optional “feed tracking” module can be enabled later by farms to monitor feed stock and receive simple alerts (e.g. “current feed lasts ~4 days”).
+
+Value & Differentiation
+
+Focused on a specific niche: dairy farms → end customers, not a generic food delivery app.
+
+Creates an organized, repeatable ordering channel instead of scattered WhatsApp orders.
+
+Helps farms reduce waste and plan production based on real demand.
+
+Gives customers more transparency about where their dairy products come from.
+
+Potential Challenges & Opportunities
+
+Challenge: keeping the scope realistic (orders + capacity) and not overloading the MVP.
+
+Opportunity: later extensions such as analytics for farms, feed/inventory tracking, and basic delivery routing.
