@@ -127,15 +127,8 @@ Farm owners (all types) and consumers who want local, fresh, and traceable produ
 - Summary of the selected MVP includes rationale and potential impact.  
 - Overview of team formation and workflow to ensure transparency and collaboration.  
 
- **Stage 1 Completion:** 100% — Team formation, research, evaluation, decision, and documentation completed.  
 
 
 
-**© Dairy Direct Team – Holberton Project (Stage 1)**
-"""
-
-path = "/mnt/data/README_DairyDirect_EN.md"
-with open(path, "w", encoding="utf-8") as f:
-    f.write(readme_md)
 
 path
