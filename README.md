@@ -148,6 +148,7 @@ Build a simple web platform that connects a local farm with consumers, helps the
 
 - One web application with two roles: **Farm** and **Consumer**.
 - Simple sign-up and login for farms and users.
+- Real payment gateway integration (cards, Apple Pay, STC Pay,Moyasar etc.).
 - **Farm side:**
   - Manage products (add / edit / delete) with price and quantity.
   - Set daily capacity or available amount for orders.
@@ -161,13 +162,12 @@ Build a simple web platform that connects a local farm with consumers, helps the
 - Use one shared database for users, products, and orders.
 
 **Out-of-Scope (MVP)**
-
-- Real payment gateway integration (cards, Apple Pay, STC Pay, etc.).
 - Complex delivery features or live map tracking.
-- Large multi-farm marketplace with advanced search and recommendations.
 - Native mobile applications (web-only for this project).
 - Advanced AI-based analytics (considered as **Future Work**).
 
+
+ ** Deliverables
 ---
 
 ### 3) Risks and Mitigation
@@ -185,6 +185,8 @@ Build a simple web platform that connects a local farm with consumers, helps the
   _Mitigation:_ Keep solutions simple, use tutorials, and pair-program when needed.
 
 ---
+
+
 
 ### 4) High-Level Plan
 
