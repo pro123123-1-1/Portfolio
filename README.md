@@ -132,7 +132,7 @@ Build a simple web platform that connects a local farm with consumers, helps the
   Organizes meetings, splits tasks, and tracks time and progress.     **Abdullah**  
 
 - **Backend Developer**  and **QA** 
-  Designs the database and APIs, and implements product and order logic.      **Raghad**  
+  Designs the database and APIs, and implements product and order logic.      **Raghad**     **Abdullah**  
 
 - **Frontend Developer**  and **QA** 
   Builds the farm dashboard and consumer shop, and connects them to the APIs.      **Haifa**  
