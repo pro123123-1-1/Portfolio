@@ -129,16 +129,16 @@ Build a simple web platform that connects a local farm with consumers, helps the
 **Team Roles**
 
 - **Project Coordinator / PM**  
-  Organizes meetings, splits tasks, and tracks time and progress.     Abdullah 
+  Organizes meetings, splits tasks, and tracks time and progress.     **Abdullah**  
 
-- **Backend Developer**  
-  Designs the database and APIs, and implements product and order logic.         
+- **Backend Developer**  and **QA** 
+  Designs the database and APIs, and implements product and order logic.      **Raghad**  
 
-- **Frontend Developer**  
-  Builds the farm dashboard and consumer shop, and connects them to the APIs.
+- **Frontend Developer**  and **QA** 
+  Builds the farm dashboard and consumer shop, and connects them to the APIs.      **Haifa**  
 
 - **Data & Documentation Owner**  
-  Prepares simple sample data and keeps project documents and reports up to date.         Najwa 
+  Prepares simple sample data and keeps project documents and reports up to date.         **Najwa**
 
 ---
 
