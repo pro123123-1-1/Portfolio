@@ -7,10 +7,17 @@
 
 ### 👥 Team Members & Roles
 
-* **Abdullah – Project Manager:** Leads coordination, organizes meetings, and tracks progress.
-* **Raghad – Backend Developer:** Designs the database, builds APIs, and implements business logic.
-* **Haifa – Frontend Developer:** Builds and styles the user interface for both farm and consumer roles.
-* **Najwa – Data & Documentation Owner:** Handles analytics, testing data, and documentation (reports, README, etc.).
+- **Project Coordinator / PM**  
+  Organizes meetings, splits tasks, and tracks time and progress.     **Abdullah**  
+
+- **Backend Developer**  and **QA** 
+  Designs the database and APIs, and implements product and order logic.      **Raghad**     **Abdullah**  
+
+- **Frontend Developer**  and **QA** 
+  Builds the farm dashboard and consumer shop, and connects them to the APIs.      **Haifa**    **Najwa**
+
+- **Data & Documentation Owner**  
+  Prepares simple sample data and keeps project documents and reports up to date.         **Najwa**
 
 ---
 
