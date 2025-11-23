@@ -1,6 +1,6 @@
-# Stage 1 – Team Formation & Idea Development
+## Stage 1 – Team Formation & Idea Development
 
-## 0 - Team Formation
+### 0) Team Formation
 
 * **First Meeting:** October 26 – On-site at Holberton Campus, 4:00 PM
 * **Communication:** WhatsApp group for daily coordination + weekly in‑person meetings
@@ -12,9 +12,9 @@
 * **Haifa – Frontend Developer:** Builds and styles the user interface for both farm and consumer roles.
 * **Najwa – Data & Documentation Owner:** Handles analytics, testing data, and documentation (reports, README, etc.).
 
+---
 
-
-## 1 - Research and Brainstorming
+### 1) Research and Brainstorming
 
 Each member researched ideas based on personal interests and real-world needs (IELTS preparation, drone delivery, supply chain).
 
@@ -31,9 +31,9 @@ The team gathered feedback from people about daily challenges and reviewed YouTu
 * Listing pros/cons for each idea
 * "How Might We..." questions to discover innovation angles
 
+---
 
-
-## 2 - Idea Evaluation
+### 2) Idea Evaluation
 
 **Evaluation Criteria:** Feasibility, potential impact, technical alignment, scalability, time, and ease of implementation.
 
@@ -65,9 +65,9 @@ A web platform connecting farms directly with consumers.
 * **Strengths:** Clear problem; realistic scope; strong balance between frontend, backend, and analytics.
 * **Decision:** Selected as the official MVP.
 
+---
 
-
-## 3 - Decision and Refinement
+### 3) Decision and Refinement
 
 ### Final MVP: **Dairy Direct – Connecting Farms Directly with Consumers**
 
@@ -105,9 +105,9 @@ Small and medium-sized farms rely on unorganized channels (WhatsApp, calls, midd
 * Digitize operations for small and mid‑size farms
 * Strengthen local farm‑to‑consumer channels
 
+---
 
-
-## 4 - Idea Development Documentation
+### 4) Idea Development Documentation
 
 * All idea stages documented in Google Docs (brainstorming, pros/cons, meetings, decision).
 * Final MVP summary includes rationale and expected impact.
