@@ -1,7 +1,6 @@
 # Dairy Direct – Connecting Farms Directly with Consumers
 *A simple web platform connecting all types of farms (dairy, fruits, vegetables, dates, etc.) directly with consumers.*
 
----
 
 ##  Stage 1 – Team Formation & Idea Development
 
@@ -9,13 +8,12 @@
 - **First meeting:** October 26 – On-site at Holberton Campus, 4:00 PM  
 - **Communication:** WhatsApp group for daily coordination + weekly in-person meetings  
 
-**👥 Team Members & Roles:**
+**Team Members & Roles:**
 - **Abdullah** – *Project Manager:* Leads coordination, meeting organization, and progress tracking.  
 - **Raghad** – *Backend Developer:* Designs the database, builds APIs, and implements business logic.  
 - **Haifa** – *Frontend Developer:* Builds and styles the user interface for both farm and consumer roles.  
 - **Najwa** – *Data & Documentation Owner:* Handles analytics, testing data, and documentation (reports, README, etc.).  
 
----
 
 ###  1. Research and Brainstorming
 - Each member researched ideas based on personal interests and real-world needs (IELTS preparation, drone delivery, supply chain).  
@@ -28,7 +26,7 @@
   - Listing pros/cons for each idea  
   - “How Might We…” questions to uncover innovation angles  
 
----
+
 
 ###  2. Idea Evaluation
 **Evaluation Criteria:** Feasibility, potential impact, technical alignment, scalability, time, and ease of implementation.
@@ -53,7 +51,7 @@ A web platform connecting farms directly with end consumers. Consumers can order
 **Strengths:** Clear problem, realistic scope, defined users, and good balance between web development and data analytics.  
 **Decision:** Selected as the final MVP idea.  
 
----
+
 
 ###  3. Decision and Refinement
 **Final MVP:** *Dairy Direct – Connecting Farms Directly with Consumers*  
@@ -83,7 +81,7 @@ Farm owners (all types) and consumers who want local, fresh, and traceable produ
 - Digitize small and mid-size farms’ operations  
 - Strengthen direct local farm-to-consumer connections  
 
----
+
 
 ###  4. Idea Development Documentation
 - All stages documented in **Google Docs** (ideas, pros/cons, meeting notes, and decisions).  
@@ -91,7 +89,7 @@ Farm owners (all types) and consumers who want local, fresh, and traceable produ
 - Overview of team formation and workflow to ensure transparency and collaboration.  
 
 
----
+
 
 ## Stage 2 – Project Charter
 
@@ -113,7 +111,7 @@ Build a simple web platform that connects a local farm with consumers, helps the
 - Support a full demo flow for three test users:
   - sign up → browse products → place order → update order status.
 
----
+
 
 ### 1) Stakeholders and Team Roles
 
@@ -140,7 +138,7 @@ Build a simple web platform that connects a local farm with consumers, helps the
 - **Data & Documentation Owner**  
   Prepares simple sample data and keeps project documents and reports up to date.         **Najwa**
 
----
+
 
 ### 2) Project Scope
 
@@ -170,7 +168,7 @@ Build a simple web platform that connects a local farm with consumers, helps the
 
  **Deliverables**     
  - Web Application
----
+
 
 ### 3) Risks and Mitigation
 
@@ -186,7 +184,7 @@ Build a simple web platform that connects a local farm with consumers, helps the
   Limited experience with full-stack (connecting frontend and backend).  
   _Mitigation:_ Keep solutions simple, use tutorials, and pair-program when needed.
 
----
+
 
 
 
@@ -207,7 +205,7 @@ Build a simple web platform that connects a local farm with consumers, helps the
 - **Weeks 11–12 (Stage 5):**  
   Fix bugs, polish the UI, and prepare the final live demo and report.
 
----
+
 
 ### 5) URLs (Sharing)
 
