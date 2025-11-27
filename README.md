@@ -213,5 +213,3 @@ Build a simple web platform that connects a local farm with consumers, helps the
 - **Frontend repository:** `<GitHub URL>`
 - **Backend repository:** `<GitHub URL>`
 - **Extra documentation (Notion / other):** `<optional link>`
-
-
