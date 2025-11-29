@@ -1,0 +1,39 @@
+graph TB
+    subgraph "Users"
+        FO[Farm Owner]
+        C[Consumer]
+    end
+    
+    subgraph "Frontend Layer"
+        WEB[Web Application<br/>HTML/CSS/JavaScript/React]
+    end
+    
+    subgraph "Backend Layer"
+        API[Django REST Framework<br/>API Server]
+    end
+    
+    subgraph "Data Layer"
+        DB[(PostgreSQL<br/>Database)]
+    end
+    
+    subgraph "External Services"
+        PAY[Moyasar<br/>Payment Gateway]
+    end
+    
+    FO -->|Browse/Manage Products<br/>Update Orders| WEB
+    C -->|Browse Products<br/>Place Orders<br/>Track Orders| WEB
+    
+    WEB -->|HTTP Requests| API
+    API -->|Query/Update| DB
+    DB -->|Data Response| API
+    API -->|HTTP Response| WEB
+    
+    API <-->|Payment Processing| PAY
+    
+    style FO fill:#e1f5ff
+    style C fill:#e1f5ff
+    style WEB fill:#fff4e1
+    style API fill:#ffe1e1
+    style DB fill:#e1ffe1
+    style PAY fill:#f0e1ff
+
