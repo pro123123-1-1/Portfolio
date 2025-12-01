@@ -1,0 +1,20 @@
+sequenceDiagram
+    title 3) Consumer Views and Tracks Orders
+    participant C as Consumer (Browser)
+    participant FE as Frontend Web App
+    participant API as Django REST API
+    participant DB as PostgreSQL
+
+    C->>FE: Open "My Orders"
+    FE->>API: GET /api/orders?mine=true
+    API->>DB: Query orders by consumer
+    DB-->>API: Orders list
+    API-->>FE: Orders JSON
+    FE-->>C: Render order list with statuses
+
+    C->>FE: Select order
+    FE->>API: GET /api/orders/{id}
+    API->>DB: Fetch order & items
+    DB-->>API: Order + items
+    API-->>FE: Order details
+    FE-->>C: Show status timeline & details

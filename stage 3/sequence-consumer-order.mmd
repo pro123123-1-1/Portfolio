@@ -1,0 +1,29 @@
+sequenceDiagram
+    title 1) Consumer Places an Order & Pays
+    participant C as Consumer (Browser)
+    participant FE as Frontend Web App
+    participant API as Django REST API
+    participant DB as PostgreSQL
+    participant PAY as Moyasar
+
+    C->>FE: Select products & quantities
+    C->>FE: Click "Checkout"
+    FE->>API: POST /api/orders/ (cart, farm_id)
+    API->>DB: Validate products & capacity
+    DB-->>API: OK (capacity available)
+    API->>DB: Create Order & OrderItems (status=PENDING)
+    API->>PAY: Create payment (amount, order_id)
+    PAY-->>API: Payment URL / payment_id
+    API-->>FE: 201 Created (order, payment_url)
+    FE-->>C: Redirect to payment page / show payment UI
+
+    C->>PAY: Enter payment details
+    PAY-->>API: Webhook (payment success)
+    API->>DB: Update Payment (PAID) & Order (CONFIRMED)
+    API-->>PAY: 200 OK
+    C->>FE: Return to app
+    FE->>API: GET /api/orders/{id}
+    API->>DB: Fetch order
+    DB-->>API: Order (CONFIRMED)
+    API-->>FE: Order details
+    FE-->>C: Show confirmation screen
