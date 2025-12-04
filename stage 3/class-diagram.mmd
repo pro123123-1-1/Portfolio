@@ -33,16 +33,6 @@ classDiagram
         +is_available_for_date(date)
     }
 
-    class DailyCapacity {
-        +int id
-        +Product product
-        +date date
-        +decimal max_quantity
-        +decimal reserved_quantity
-        +available_quantity()
-        +reserve(qty)
-    }
-
     class Order {
         +int id
         +User consumer
@@ -78,20 +68,11 @@ classDiagram
         +is_completed()
     }
 
-    class Favorite {
-        +int id
-        +User consumer
-        +Product product
-    }
-
     %% Relationships
     User "1" --> "*" Farm : owns
     User "1" --> "*" Order : places
-    User "1" --> "*" Favorite : marks
     Farm "1" --> "*" Product : offers
     Farm "1" --> "*" Order : receives
-    Product "1" --> "*" DailyCapacity : has capacity
     Product "1" --> "*" OrderItem : included in
-    Product "1" --> "*" Favorite : is favorited
     Order "1" --> "*" OrderItem : contains
     Order "1" --> "1" Payment : has

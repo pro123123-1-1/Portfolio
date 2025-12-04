@@ -3,12 +3,9 @@ erDiagram
     USER ||--o{ ORDER : places
     FARM ||--o{ PRODUCT : "offers"
     FARM ||--o{ ORDER : "receives"
-    PRODUCT ||--o{ DAILY_CAPACITY : "has capacity per day"
     PRODUCT ||--o{ ORDER_ITEM : "included in"
     ORDER ||--o{ ORDER_ITEM : contains
     ORDER ||--o{ PAYMENT : has
-    USER ||--o{ FAVORITE : marks
-    PRODUCT ||--o{ FAVORITE : is_favorited
 
     USER {
         int id PK
@@ -39,14 +36,6 @@ erDiagram
         bool is_active
     }
 
-    DAILY_CAPACITY {
-        int id PK
-        int product_id FK "references PRODUCT.id"
-        date date
-        numeric max_quantity
-        numeric reserved_quantity
-    }
-
     ORDER {
         int id PK
         int consumer_id FK "references USER.id"
@@ -73,10 +62,4 @@ erDiagram
         varchar status "INITIATED, PAID, FAILED, REFUNDED"
         numeric amount
         datetime created_at
-    }
-
-    FAVORITE {
-        int id PK
-        int consumer_id FK "references USER.id"
-        int product_id FK "references PRODUCT.id"
     }
