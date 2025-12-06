@@ -9,8 +9,8 @@ sequenceDiagram
     C->>FE: Select products & quantities
     C->>FE: Click "Checkout"
     FE->>API: POST /api/orders/ (cart, farm_id)
-    API->>DB: Validate products & capacity
-    DB-->>API: OK (capacity available)
+    API->>DB: Validate products & Quantity
+    DB-->>API: OK (quantity available)
     API->>DB: Create Order & OrderItems (status=PENDING)
     API->>PAY: Create payment (amount, order_id)
     PAY-->>API: Payment URL / payment_id

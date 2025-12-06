@@ -26,7 +26,9 @@ Frontend: **Web (HTML, CSS, JavaScript / React optional)**
 
 - As a farm owner, I want to register/login so that I can manage my products.
 
-- As a farm owner, I want to add/edit/delete products so inventory stays accurate.
+- As a farm owner, I want to add products so inventory stays accurate.
+
+- As a farm owner, I want to delete products so inventory stays accurate.
 
 - As a farm owner, I want to set daily capacity so I avoid accepting too many orders.
 
@@ -146,7 +148,7 @@ Django API ↔ External Payment API
 ## Backend Components (Django)
 
 - **core app** (existing):  
-  - **Models**: `Farm`, `Product`, `DailyCapacity`, `Order`, `OrderItem`, `Payment`, `Favorite`.  
+  - **Models**: `Farm`, `Product`, `Quantity`, `Order`, `OrderItem`, `Payment`, `Favorite`.  
   - **Serializers**: Map models to JSON (e.g., `ProductSerializer`, `OrderSerializer`).  
   - **Views / ViewSets**: Provide REST endpoints using DRF viewsets.  
   - **Permissions**: Custom permissions to distinguish farm owners vs consumers.  
@@ -169,9 +171,9 @@ Django API ↔ External Payment API
   - **Attributes**: `farm`, `name`, `description`, `price`, `unit`, `is_active`.  
   - **Core methods**:  
     - `__str__()` – returns product name.  
-    - `is_available_for_date(date)` – checks capacity for a given day (via `DailyCapacity`).  
+    - `is_available_for_date(date)` – checks capacity for a given day (via `Quantity`).  
 
-- **DailyCapacity**  
+- **Quantity**  
   - **Attributes**: `product`, `date`, `max_quantity`, `reserved_quantity`.  
   - **Core methods**:  
     - `available_quantity()` – returns `max_quantity - reserved_quantity`.  
@@ -195,10 +197,6 @@ Django API ↔ External Payment API
     - `mark_success()` / `mark_failed()` – update status and related `Order` status.  
     - `is_completed()` – convenience method to check if payment is final.  
 
-- **Favorite**  
-  - **Attributes**: `consumer`, `product`.  
-  - **Core methods**:  
-    - Typically simple; may include helper queries like `Favorite.objects.for_user(user)`.  
 
 ## Database Entities (Relational Schema – Simplified)
 
@@ -223,7 +221,7 @@ Django API ↔ External Payment API
   - `unit` (e.g., liter, kg)  
   - `is_active`  
 
-- **DailyCapacity**  
+- **Quantity**  
   - `id` (PK)  
   - `product` (FK → Product)  
   - `date`  
@@ -262,7 +260,7 @@ Django API ↔ External Payment API
 
 This schema:  
 - Enforces referential integrity between farms, products, orders, and users.  
-- Enables capacity checks via the `DailyCapacity` table to prevent overbooking.  
+- Enables capacity checks via the `Quantity` table to prevent overbooking.  
 
 > See also `er-diagram.mmd` for a Mermaid ER diagram showing these tables, attributes, and relationships visually.
 
@@ -304,7 +302,7 @@ These components are intentionally high-level: implementation can be plain HTML/
 3. **Django API**:  
    - Authenticates consumer.  
    - Validates that each product belongs to the specified farm.  
-   - Checks `DailyCapacity` for each product/date to ensure requested quantity + reserved ≤ max.  
+   - Checks `Quantity` for each product/date to ensure requested quantity + reserved ≤ max.  
    - If valid, creates `Order` and `OrderItem` records with `status = PENDING`.  
 4. **Django API** calls Moyasar to initiate payment, creates a `Payment` record with `status = INITIATED`.  
 5. **Moyasar** returns a payment URL/token.  
@@ -336,17 +334,80 @@ These components are intentionally high-level: implementation can be plain HTML/
 
 ## 4.1 External API – Moyasar
 
-- **Usage**:  
-  - Create payment sessions for orders.  
-  - Receive payment status via webhooks.  
+Base URL: `https://api.moyasar.com/v1/`
 
-- **Key Interactions**:  
-  - **Create Payment** (server-side call from Django):  
-    - Request: `{ amount, currency, description, callback_url, metadata: { order_id } }`  
-    - Response: payment URL / ID.  
-  - **Webhook**:  
-    - Moyasar sends payment status to `/api/payments/webhook/`.  
-    - Django verifies signature using Moyasar secret key.  
+- **Authentication**:  
+  - Uses API key authentication via `Authorization` header: `Bearer {api_key}`  
+  - API keys are stored securely in Django environment variables.  
+
+- **Payments**
+  - `POST https://api.moyasar.com/v1/payments/` – Create payment session (server-side call from Django).  
+    - **Input**:  
+      ```json
+      {
+        "amount": 12000,
+        "currency": "SAR",
+        "description": "Order #123 - Farm Products",
+        "callback_url": "https://yourdomain.com/api/payments/webhook/",
+        "metadata": {
+          "order_id": 123,
+          "farm_id": 1
+        }
+      }
+      ```  
+    - **Output**:  
+      ```json
+      {
+        "id": "payment_abc123",
+        "status": "initiated",
+        "amount": 12000,
+        "currency": "SAR",
+        "description": "Order #123 - Farm Products",
+        "invoice_id": null,
+        "ip": null,
+        "callback_url": "https://yourdomain.com/api/payments/webhook/",
+        "created_at": "2024-01-15T10:30:00Z",
+        "updated_at": "2024-01-15T10:30:00Z",
+        "metadata": {
+          "order_id": 123,
+          "farm_id": 1
+        },
+        "source": {
+          "type": "creditcard",
+          "company": "visa",
+          "name": "John Doe",
+          "number": "4111111111111111",
+          "gateway_id": "gw_xyz789",
+          "reference_number": "ref_456",
+          "token": "token_abc123",
+          "message": null,
+          "transaction_url": "https://moyasar.com/payment/abc123"
+        }
+      }
+      ```  
+  - `GET https://api.moyasar.com/v1/payments/{payment_id}/` – Retrieve payment details.  
+    - **Output**: Payment object with current status and details.  
+
+- **Webhooks**
+  - Moyasar sends payment status updates to Django webhook endpoint: `POST /api/payments/webhook/`  
+    - **Input** (from Moyasar):  
+      ```json
+      {
+        "id": "payment_abc123",
+        "status": "paid",
+        "amount": 12000,
+        "currency": "SAR",
+        "description": "Order #123 - Farm Products",
+        "metadata": {
+          "order_id": 123,
+          "farm_id": 1
+        },
+        "created_at": "2024-01-15T10:30:00Z",
+        "updated_at": "2024-01-15T10:35:00Z"
+      }
+      ```  
+    - **Security**: Django verifies webhook signature using Moyasar secret key to ensure authenticity.  
+    - **Processing**: Django updates `Payment.status` and `Order.status` based on webhook payload.  
 
 ## 4.2 Internal REST API (Examples)
 
@@ -407,11 +468,6 @@ Base URL: `/api/`
   - `POST /api/payments/webhook/` – Receives events from Moyasar.  
   - `GET /api/payments/{id}/` – Payment details (for order owner or farm owner).  
 
-- **Favorites** (optional)
-  - `GET /api/favorites/` – List favorite products.  
-  - `POST /api/favorites/` – Add favorite.  
-  - `DELETE /api/favorites/{id}/` – Remove favorite.  
-
 ---
 
 # 5. Source Control Management (SCM) Plan
@@ -459,7 +515,7 @@ Base URL: `/api/`
 - **Separation of Roles (Farm Owner vs Consumer)**:  
   - Aligns with user stories and enforces clear authorization boundaries for security.  
 
-- **DailyCapacity Table**:  
+- **Quantity Table**:  
   - Directly supports the requirement *“As a farm owner, I want to set daily capacity so I avoid accepting too many orders”* and  
     *“As the system, I must prevent ordering out-of-stock items.”*  
 

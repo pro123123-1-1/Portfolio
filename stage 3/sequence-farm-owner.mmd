@@ -19,16 +19,23 @@ sequenceDiagram
     API-->>FE: Products JSON
     FE-->>FO: Show products
 
-    FO->>FE: Create/Update/Delete product
-    FE->>API: POST/PATCH/DELETE /api/products/
-    API->>DB: Apply change (validate owner)
-    DB-->>API: OK
-    API-->>FE: Updated product list/confirmation
+    FO->>FE: Add product
+    FE->>API: POST /api/products/
+    API->>DB: Create product (validate owner)
+    DB-->>API: Product created
+    API-->>FE: Product JSON
+    FE-->>FO: Show success message
+
+    FO->>FE: Delete product
+    FE->>API: DELETE /api/products/{id}/
+    API->>DB: Delete/deactivate product (validate owner)
+    DB-->>API: Product deleted
+    API-->>FE: Confirmation
     FE-->>FO: Show success message
 
     FO->>FE: Set daily capacity
     FE->>API: POST /api/capacities/ (product_id, date, max_quantity)
-    API->>DB: Upsert DailyCapacity
+    API->>DB: Upsert Quantity
     DB-->>API: OK
     API-->>FE: Capacity saved
     FE-->>FO: Show updated capacity
