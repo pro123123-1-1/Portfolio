@@ -1,0 +1,41 @@
+sequenceDiagram
+    title 2) Farm Owner Manages Products & Capacity
+    participant FO as Farm Owner (Browser)
+    participant FE as Frontend Web App
+    participant API as Django REST API
+    participant DB as PostgreSQL
+
+    FO->>FE: Open Dashboard
+    FE->>API: GET /api/farms/mine/
+    API->>DB: Query farms by owner
+    DB-->>API: Farms list
+    API-->>FE: Farms JSON
+    FE-->>FO: Render dashboard
+
+    FO->>FE: Open Product Management
+    FE->>API: GET /api/products?farm={id}
+    API->>DB: Query products by farm
+    DB-->>API: Product list
+    API-->>FE: Products JSON
+    FE-->>FO: Show products
+
+    FO->>FE: Add product
+    FE->>API: POST /api/products/
+    API->>DB: Create product (validate owner)
+    DB-->>API: Product created
+    API-->>FE: Product JSON
+    FE-->>FO: Show success message
+
+    FO->>FE: Delete product
+    FE->>API: DELETE /api/products/{id}/
+    API->>DB: Delete/deactivate product (validate owner)
+    DB-->>API: Product deleted
+    API-->>FE: Confirmation
+    FE-->>FO: Show success message
+
+    FO->>FE: Set daily capacity
+    FE->>API: POST /api/capacities/ (product_id, date, max_quantity)
+    API->>DB: Upsert Quantity
+    DB-->>API: OK
+    API-->>FE: Capacity saved
+    FE-->>FO: Show updated capacity

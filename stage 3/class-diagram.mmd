@@ -1,0 +1,78 @@
+classDiagram
+    class User {
+        +int id
+        +str username
+        +str email
+        +str password_hash
+        +bool is_active
+        +datetime date_joined
+        +str role
+        +__str__()
+    }
+
+    class Farm {
+        +int id
+        +User owner
+        +str name
+        +str location
+        +str description
+        +datetime created_at
+        +__str__()
+        +get_active_products()
+    }
+
+    class Product {
+        +int id
+        +Farm farm
+        +str name
+        +str description
+        +decimal price
+        +str unit
+        +bool is_active
+        +__str__()
+        +is_available_for_date(date)
+    }
+
+    class Order {
+        +int id
+        +User consumer
+        +Farm farm
+        +str status
+        +decimal total_amount
+        +datetime created_at
+        +datetime updated_at
+        +calculate_total()
+        +can_update_status(new_status)
+        +mark_paid()
+    }
+
+    class OrderItem {
+        +int id
+        +Order order
+        +Product product
+        +decimal quantity
+        +decimal unit_price
+        +line_total()
+    }
+
+    class Payment {
+        +int id
+        +Order order
+        +str provider
+        +str provider_payment_id
+        +str status
+        +decimal amount
+        +datetime created_at
+        +mark_success()
+        +mark_failed()
+        +is_completed()
+    }
+
+    %% Relationships
+    User "1" --> "*" Farm : owns
+    User "1" --> "*" Order : places
+    Farm "1" --> "*" Product : offers
+    Farm "1" --> "*" Order : receives
+    Product "1" --> "*" OrderItem : included in
+    Order "1" --> "*" OrderItem : contains
+    Order "1" --> "1" Payment : has
