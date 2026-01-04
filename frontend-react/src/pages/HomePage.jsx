@@ -105,7 +105,7 @@ function HomePage() {
         <div className="wave"></div>
         <div className="container">
           <div className="hero-content">
-            <h1>من تراب وطننا... حيث تُزرع الجودة، وتُحصد الثقة</h1>
+            <h1>من تراب وطننا...<br />حيث تُزرع الجودة، وتُحصد الثقة</h1>
             <p>نقدم لكم أفضل المنتجات الزراعية الطازجة مباشرة من مزارعنا إلى منزلكم</p>
             <div className="hero-buttons">
               <Link to="/products" className="btn-primary">استكشف منتجاتنا</Link>
