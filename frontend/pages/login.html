@@ -1,286 +1,217 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول - مزارع الوادي</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
     <style>
-        .login-page {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .login-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-            width: 100%;
+        .auth-container {
             max-width: 400px;
-        }
-
-        .login-header {
-            background: var(--primary-color);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .login-header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-        }
-
-        .login-header p {
-            margin: 10px 0 0 0;
-            opacity: 0.9;
-        }
-
-        .login-form {
-            padding: 30px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-color);
+            margin-bottom: 5px;
+            color: #333;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
 
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1);
-        }
-
-        .remember-forgot {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .forgot-password {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        .forgot-password:hover {
-            text-decoration: underline;
-        }
-
-        .login-button {
+        .btn-submit {
             width: 100%;
-            padding: 15px;
-            background: var(--primary-color);
+            padding: 12px;
+            background: #27ae60;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 4px;
+            cursor: pointer;
             font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
         }
 
-        .login-button:hover {
-            background: #1e3f1a;
+        .btn-submit:hover {
+            background: #219150;
         }
 
-        .login-divider {
+        .error-msg {
+            color: red;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .auth-footer {
+            margin-top: 15px;
             text-align: center;
-            margin: 25px 0;
-            position: relative;
         }
 
-        .login-divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            right: 0;
-            left: 0;
-            height: 1px;
-            background: var(--border-color);
-        }
-
-        .login-divider span {
-            background: white;
-            padding: 0 15px;
-            color: #666;
-        }
-
-        .social-login {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .social-btn {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .social-btn.google:hover {
-            border-color: #db4437;
-            color: #db4437;
-        }
-
-        .social-btn.facebook:hover {
-            border-color: #4267B2;
-            color: #4267B2;
-        }
-
-        .signup-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .signup-link a {
-            color: var(--primary-color);
+        .auth-footer a {
+            color: #27ae60;
             text-decoration: none;
-            font-weight: 500;
-        }
-
-        .signup-link a:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
 
 <body>
-
-    <!-- صفحة تسجيل الدخول -->
-    <section class="login-page">
-        <div class="login-container">
-            <div class="login-header">
-                <h1><i class="fas fa-tractor"></i> مزارع الوادي</h1>
-                <p>مرحباً بعودتك! سجل الدخول إلى حسابك</p>
-            </div>
-
-            <div class="login-form">
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="email">البريد الإلكتروني</label>
-                        <input type="email" id="email" name="email" placeholder="ادخل بريدك الإلكتروني" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">كلمة المرور</label>
-                        <input type="password" id="password" name="password" placeholder="ادخل كلمة المرور" required>
-                    </div>
-
-                    <div class="remember-forgot">
-                        <label class="remember-me">
-                            <input type="checkbox" name="remember">
-                            تذكرني
-                        </label>
-                        <a href="forgot-password.html" class="forgot-password">نسيت كلمة المرور؟</a>
-                    </div>
-
-                    <button type="submit" class="login-button">
-                        <i class="fas fa-sign-in-alt"></i>
-                        تسجيل الدخول
-                    </button>
-                </form>
-
-                <div class="login-divider">
-                    <span>أو سجل الدخول باستخدام</span>
-                </div>
-
-                <div class="social-login">
-                    <button type="button" class="social-btn google">
-                        <i class="fab fa-google"></i> جوجل
-                    </button>
-                    <button type="button" class="social-btn facebook">
-                        <i class="fab fa-facebook-f"></i> فيسبوك
-                    </button>
-                </div>
-
-                <div class="signup-link">
-                    <p>ليس لديك حساب؟ <a href="signup.html">أنشئ حساب جديد</a></p>
-                </div>
-
-                <div class="farmer-login" style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
-                    <p>هل أنت مزارع؟ <a href="farmer-login.html">سجل الدخول ك مزارع</a></p>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-tractor"></i>
+                    <a href="../index.html" style="color: inherit; text-decoration: none;">مزارع الوادي</a>
                 </div>
             </div>
         </div>
-    </section>
+    </header>
 
-    <script>
-        /*  دالة لتحديد لغة المستخدم وترجمة رسالة الخطأ */
-        function getErrorMessage() {
-            const lang = navigator.language.startsWith('ar') ? 'ar' : 'en';
+    <div class="auth-container">
+        <h2 style="text-align: center; margin-bottom: 20px;">تسجيل الدخول</h2>
+        <div id="error-message" class="error-msg"></div>
 
-            const messages = {
-                ar: "خطأ في تسجيل الدخول: تأكد من البريد الإلكتروني وكلمة المرور.",
-                en: "Login error: Please check your email and password."
-            };
+        <form id="loginForm">
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="email" required placeholder="example@domain.com">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="password" required placeholder="********">
+            </div>
+            <button type="submit" class="btn-submit">دخول</button>
+        </form>
 
-            return messages[lang];
+        <div class="auth-footer">
+            <p>ليس لديك حساب؟ <a href="signup.html">سجل الآن</a></p>
+        </div>
+    </div>
+
+   <script>
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // تحديد اللغة من المتصفح
+    const browserLang = navigator.language || navigator.userLanguage;
+    const isArabic = browserLang.startsWith('ar');
+
+    // جميع رسائل الخطأ والنواتج
+    const messages = {
+        ar: {
+            emailRequired: 'البريد الإلكتروني مطلوب',
+            passwordRequired: 'كلمة المرور مطلوبة',
+            invalidCredentials: 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+            serverError: 'حدث خطأ في الخادم',
+            networkError: 'خطأ في الاتصال بالخادم',
+            success: 'تم تسجيل الدخول بنجاح!',
+            invalidEmail: 'بريد إلكتروني غير صالح',
+            loginFailed: 'فشل تسجيل الدخول. تأكد من البيانات.'
+        },
+        en: {
+            emailRequired: 'Email is required',
+            passwordRequired: 'Password is required',
+            invalidCredentials: 'Invalid email or password',
+            serverError: 'Server error occurred',
+            networkError: 'Network connection error',
+            success: 'Login successful!',
+            invalidEmail: 'Invalid email address',
+            loginFailed: 'Login failed. Please check your credentials.'
         }
+    };
 
-        /* معالجة تسجيل الدخول */
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+    const msg = isArabic ? messages.ar : messages.en;
+    const langHeader = isArabic ? 'ar' : 'en';
 
-            try {
-                // ✨ مثال: طلب تسجيل دخول API (عدليه حسب الـ backend لديك)
-                const response = await fetch("http://127.0.0.1:8001/api/login/", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, password })
-                });
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.style.display = 'none';
 
-                if (!response.ok) {
-                    alert(getErrorMessage());
-                    return;
-                }
+    // التحقق من الحقول المطلوبة
+    if (!email) {
+        errorDiv.innerText = msg.emailRequired;
+        errorDiv.style.display = 'block';
+        return;
+    }
 
-                alert("تم تسجيل الدخول بنجاح!");
-                window.location.href = "../index.html";
+    // التحقق من صحة البريد الإلكتروني
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        errorDiv.innerText = msg.invalidEmail;
+        errorDiv.style.display = 'block';
+        return;
+    }
 
-            } catch (error) {
-                alert(getErrorMessage());
-            }
+    if (!password) {
+        errorDiv.innerText = msg.passwordRequired;
+        errorDiv.style.display = 'block';
+        return;
+    }
+
+    try {
+        const response = await fetch('http://127.0.0.1:8001/api/auth/login/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept-Language': langHeader
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
         });
-    </script>
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // حفظ التوكنات واليوزر
+            if (data.access) localStorage.setItem('access_token', data.access);
+            if (data.refresh) localStorage.setItem('refresh_token', data.refresh);
+            if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
+
+            alert(msg.success);
+            window.location.href = '../index.html';
+        } else {
+            let errorMsg = msg.loginFailed;
+
+            if (data.detail) {
+                errorMsg = data.detail;
+            } else if (data.error) {
+                errorMsg = data.error;
+            } else if (data.message) {
+                errorMsg = data.message;
+            }
+
+            //  تعديل مهم على الشرط 
+            if (isArabic && (errorMsg.includes('Invalid') || errorMsg.includes('email') || errorMsg.includes('password'))) {
+                errorMsg = msg.invalidCredentials;
+            }
+
+            errorDiv.innerText = errorMsg;
+            errorDiv.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        errorDiv.innerText = msg.networkError;
+        errorDiv.style.display = 'block';
+    }
+});
+</script>
 
 </body>
+
 </html>
