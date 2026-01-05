@@ -196,7 +196,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
                 errorMsg = data.message;
             }
 
-            // ✅ تعديل مهم على الشرط (الأولوية المنطقية)
+            //  تعديل مهم على الشرط 
             if (isArabic && (errorMsg.includes('Invalid') || errorMsg.includes('email') || errorMsg.includes('password'))) {
                 errorMsg = msg.invalidCredentials;
             }
