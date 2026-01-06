@@ -135,11 +135,114 @@ function filterProducts() {
     displayProducts(filteredProducts);
 }
 
-// التهيئة عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', function() {
-    displayProducts();
+
+// تهيئة أزرار إضافة إلى السلة
+function initializeAddToCartButtons() {
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.add-to-cart') || 
+            e.target.classList.contains('add-to-cart') ||
+            e.target.parentElement.classList.contains('add-to-cart')) {
+            
+            const button = e.target.closest('.add-to-cart') || 
+                          e.target.classList.contains('add-to-cart') ? e.target : 
+                          e.target.parentElement;
+            
+            handleAddToCart(button);
+        }
+    });
+}
+
+// معالجة إضافة المنتج للسلة
+function handleAddToCart(button) {
+    const productCard = button.closest('.product-card');
     
-    // إضافة أحداث للمرشحات
-    document.getElementById('categoryFilter').addEventListener('change', filterProducts);
-    document.getElementById('priceFilter').addEventListener('change', filterProducts);
+    // استخراج بيانات المنتج
+    const productName = productCard.querySelector('h3').textContent;
+    const productPrice = button.getAttribute('data-price') || 
+                        extractPrice(productCard.querySelector('.product-price').textContent);
+    const productImage = button.getAttribute('data-image') || 
+                        extractBackgroundImage(productCard.querySelector('.product-image'));
+    const productFarm = button.getAttribute('data-farm') ||
+                       (productCard.querySelector('.product-farm')?.textContent || 'مزارع الوادي');
+    
+    // إضافة للسلة
+    if (typeof addToCart === 'function') {
+        addToCart(productName, productPrice, productImage, productFarm);
+    } else if (window.cartManager) {
+        window.cartManager.addItem(productName, productPrice, productImage, productFarm);
+    } else {
+        // نسخة احتياطية
+        alert(`تمت إضافة ${productName} إلى السلة`);
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.push({
+            product: productName,
+            price: parseFloat(productPrice),
+            image: productImage,
+            farm: productFarm,
+            quantity: 1
+        });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        
+        // تحديث العداد
+        updateCartCount();
+    }
+}
+
+// استخراج السعر من النص
+function extractPrice(priceText) {
+    const match = priceText.match(/(\d+(\.\d+)?)/);
+    return match ? match[1] : '0';
+}
+
+// استخراج صورة الخلفية
+function extractBackgroundImage(element) {
+    if (!element) return '';
+    const style = element.style.backgroundImage;
+    if (style && style.startsWith('url')) {
+        return style.slice(5, -2); // إزالة 'url(' و ')'
+    }
+    return '';
+}
+
+// تحديث عداد السلة
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    
+    document.querySelectorAll('.cart-count').forEach(el => {
+        el.textContent = totalItems;
+    });
+}
+
+// تهيئة عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    initializeAddToCartButtons();
+    
+    // تحديث عداد السلة عند التحميل
+    updateCartCount();
+    
+    // إضافة خاصية data للمنتجات الموجودة
+    document.querySelectorAll('.product-card').forEach(card => {
+        const button = card.querySelector('.add-to-cart');
+        if (button && !button.hasAttribute('data-price')) {
+            const priceEl = card.querySelector('.product-price');
+            if (priceEl) {
+                const price = extractPrice(priceEl.textContent);
+                button.setAttribute('data-price', price);
+            }
+            
+            const imageEl = card.querySelector('.product-image');
+            if (imageEl) {
+                const image = extractBackgroundImage(imageEl);
+                if (image) {
+                    button.setAttribute('data-image', image);
+                }
+            }
+            
+            const farmEl = card.querySelector('.product-farm');
+            if (farmEl) {
+                button.setAttribute('data-farm', farmEl.textContent);
+            }
+        }
+    });
 });

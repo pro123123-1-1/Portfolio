@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>من نحن - مزارع الوادي</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .about-hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            margin-top: 70px;
+        }
+
+        .about-content {
+            padding: 80px 0;
+        }
+
+        .mission-vision {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin: 60px 0;
+        }
+
+        .mission-card, .vision-card {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .mission-card i, .vision-card i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .stats-section {
+            background: var(--primary-color);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .stat-item h3 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .team-section {
+            padding: 80px 0;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .team-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .team-info {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- الهيدر -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-tractor"></i>
+                    مزارع الوادي
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="../index.html">الرئيسية</a></li>
+                        <li><a href="products.html">منتجاتنا</a></li>
+                        <li><a href="farmers.html">المزارعين</a></li>
+                        <li><a href="about.html" class="active">من نحن</a></li>
+                        <li><a href="contact.html">اتصل بنا</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <a href="cart.html" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                    <a href="login.html" class="btn-primary">تسجيل الدخول</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- قسم الهيرو -->
+    <section class="about-hero">
+        <div class="container">
+            <h1 style="font-size: 3rem; margin-bottom: 20px;">من نحن</h1>
+            <p style="font-size: 1.2rem;">قصة نجاحنا في ربط المزارعين بالمستهلكين</p>
+        </div>
+    </section>
+
+    <!-- محتوى صفحة من نحن -->
+    <section class="about-content">
+        <div class="container">
+            <div class="about-text">
+                <h2 class="section-title">قصتنا</h2>
+                <p style="font-size: 1.1rem; line-height: 1.8; text-align: center; max-width: 800px; margin: 0 auto 40px;">
+                    تأسست "مزارع الوادي" عام 2020 برؤية طموحة تهدف إلى إحداث ثورة في القطاع الزراعي 
+                    من خلال ربط المزارعين المحليين مباشرة بالمستهلكين. نحن نؤمن بأن الجودة تبدأ من التربة 
+                    وتنتهي على مائدة طعامكم.
+                </p>
+            </div>
+
+            <!-- الرسالة والرؤية -->
+            <div class="mission-vision">
+                <div class="mission-card">
+                    <i class="fas fa-bullseye"></i>
+                    <h3>رسالتنا</h3>
+                    <p>تمكين المزارعين المحليين وتوفير منتجات زراعية طازجة وعالية الجودة للمستهلكين، 
+                       مع الحفاظ على الاستدامة البيئية ودعم الاقتصاد المحلي.</p>
+                </div>
+                <div class="vision-card">
+                    <i class="fas fa-eye"></i>
+                    <h3>رؤيتنا</h3>
+                    <p>أن نكون المنصة الرائدة في الربط بين المزارعين والمستهلكين في الوطن العربي، 
+                       وأن نساهم في تحقيق الأمن الغذائي من خلال دعم الزراعة المستدامة.</p>
+                </div>
+            </div>
+
+            <!--為什麼 تختارنا -->
+            <div class="why-us" style="margin: 80px 0;">
+                <h2 class="section-title">لماذا تختار مزارع الوادي؟</h2>
+                <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px;">
+                    <div class="feature-item" style="text-align: center; padding: 30px;">
+                        <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+                        <h3>جودة مضمونة</h3>
+                        <p>جميع منتجاتنا تخضع لرقابة جودة صارمة لضمان Freshness والجودة</p>
+                    </div>
+                    <div class="feature-item" style="text-align: center; padding: 30px;">
+                        <i class="fas fa-truck" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+                        <h3>توصيل سريع</h3>
+                        <p>نوصل طلباتكم خلال 24 ساعة للحفاظ على نضارة المنتجات</p>
+                    </div>
+                    <div class="feature-item" style="text-align: center; padding: 30px;">
+                        <i class="fas fa-hand-holding-usd" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+                        <h3>أسعار منافسة</h3>
+                        <p>أسعارنا مناسبة بدون وسطاء، فائدة أكثر للمزارع والمستهلك</p>
+                    </div>
+                    <div class="feature-item" style="text-align: center; padding: 30px;">
+                        <i class="fas fa-heart" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+                        <h3>دعم محلي</h3>
+                        <p>ندعم المزارعين المحليين ونشارك في تنمية المجتمع</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- إحصائيات -->
+    <section class="stats-section">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">أرقامنا تتحدث</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>500+</h3>
+                    <p>مزارع منضم</p>
+                </div>
+                <div class="stat-item">
+                    <h3>10,000+</h3>
+                    <p>عميل سعيد</p>
+                </div>
+                <div class="stat-item">
+                    <h3>50,000+</h3>
+                    <p>طلب مكتمل</p>
+                </div>
+                <div class="stat-item">
+                    <h3>15+</h3>
+                    <p>مدينة مغطاة</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- الفريق -->
+    <section class="team-section">
+        <div class="container">
+            <h2 class="section-title">فريقنا</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-image" style="background-image: url('https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')"></div>
+                    <div class="team-info">
+                        <h3>أحمد محمد</h3>
+                        <p style="color: var(--primary-color); font-weight: bold;">المؤسس والرئيس التنفيذي</p>
+                        <p>خبير في التقنية والزراعة مع خبرة 10 سنوات</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image" style="background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')"></div>
+                    <div class="team-info">
+                        <h3>فاطمة عبدالله</h3>
+                        <p style="color: var(--primary-color); font-weight: bold;">مديرة العمليات</p>
+                        <p>متخصصة في إدارة سلاسل التوريد والجودة</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image" style="background-image: url('https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')"></div>
+                    <div class="team-info">
+                        <h3>سارة الخالد</h3>
+                        <p style="color: var(--primary-color); font-weight: bold;">مديرة التسويق</p>
+                        <p>خبيرة في التسويق الرقمي وبناء العلامات التجارية</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- الفوتر -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>مزارع الوادي</h3>
+                    <p>من تراب وطننا... حيث تُزرع الجودة، وتُحصد الثقة.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-snapchat"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>روابط سريعة</h3>
+                    <ul>
+                        <li><a href="../index.html">الرئيسية</a></li>
+                        <li><a href="products.html">منتجاتنا</a></li>
+                        <li><a href="farmers.html">المزارعين</a></li>
+                        <li><a href="about.html">من نحن</a></li>
+                        <li><a href="contact.html">اتصل بنا</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>معلومات الاتصال</h3>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> 0551234567</li>
+                        <li><i class="fas fa-envelope"></i> info@almazari.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> الرياض، المملكة العربية السعودية</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2024 مزارع الوادي. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>

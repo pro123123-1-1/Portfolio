@@ -72,6 +72,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -133,103 +134,63 @@
     </div>
 
     <script>
-        const loginForm = document.getElementById('loginForm');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const errorDiv = document.getElementById('error-message');
-
-        // Remove error styling when user starts typing
-        emailInput.addEventListener('input', function() {
-            this.classList.remove('error');
-        });
-
-        passwordInput.addEventListener('input', function() {
-            this.classList.remove('error');
-        });
-
-        function showError(message) {
-            errorDiv.innerText = message;
-            errorDiv.classList.add('show');
-            errorDiv.style.display = 'block';
-        }
-
-        function hideError() {
-            errorDiv.classList.remove('show');
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 300);
-        }
-
-        function getErrorMessage(data, statusCode) {
-            // Handle different error formats from backend
-            if (data.error) {
-                if (data.error === 'Invalid credentials') {
-                    return 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.';
-                }
-                return data.error;
-            }
-
-            if (data.detail) {
-                return data.detail;
-            }
-
-            // Handle serializer validation errors
-            if (data.email) {
-                if (Array.isArray(data.email)) {
-                    return data.email[0];
-                }
-                return data.email;
-            }
-
-            if (data.password) {
-                if (Array.isArray(data.password)) {
-                    return data.password[0];
-                }
-                return data.password;
-            }
-
-            if (data.non_field_errors) {
-                if (Array.isArray(data.non_field_errors)) {
-                    return data.non_field_errors[0];
-                }
-                return data.non_field_errors;
-            }
-
-            // Default error messages
-            if (statusCode === 401) {
-                return 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.';
-            }
-
-            if (statusCode === 400) {
-                return 'البيانات المدخلة غير صحيحة. يرجى التحقق من البريد الإلكتروني وكلمة المرور.';
-            }
-
-            return 'فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.';
-        }
-
-        loginForm.addEventListener('submit', async function (e) {
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            // Reset error states
-            emailInput.classList.remove('error');
-            passwordInput.classList.remove('error');
-            hideError();
+            // تحديد اللغة من المتصفح
+            const browserLang = navigator.language || navigator.userLanguage;
+            const isArabic = browserLang.startsWith('ar');
 
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
+            // جميع رسائل الخطأ والنواتج
+            const messages = {
+                ar: {
+                    emailRequired: 'البريد الإلكتروني مطلوب',
+                    passwordRequired: 'كلمة المرور مطلوبة',
+                    invalidCredentials: 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+                    serverError: 'حدث خطأ في الخادم',
+                    networkError: 'خطأ في الاتصال بالخادم',
+                    success: 'تم تسجيل الدخول بنجاح!',
+                    invalidEmail: 'بريد إلكتروني غير صالح',
+                    loginFailed: 'فشل تسجيل الدخول. تأكد من البيانات.'
+                },
+                en: {
+                    emailRequired: 'Email is required',
+                    passwordRequired: 'Password is required',
+                    invalidCredentials: 'Invalid email or password',
+                    serverError: 'Server error occurred',
+                    networkError: 'Network connection error',
+                    success: 'Login successful!',
+                    invalidEmail: 'Invalid email address',
+                    loginFailed: 'Login failed. Please check your credentials.'
+                }
+            };
 
-            // Basic client-side validation
+            const msg = isArabic ? messages.ar : messages.en;
+            const langHeader = isArabic ? 'ar' : 'en';
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.style.display = 'none';
+
+            // التحقق من الحقول المطلوبة
             if (!email) {
-                showError('يرجى إدخال البريد الإلكتروني.');
-                emailInput.classList.add('error');
-                emailInput.focus();
+                errorDiv.innerText = msg.emailRequired;
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // التحقق من صحة البريد الإلكتروني
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorDiv.innerText = msg.invalidEmail;
+                errorDiv.style.display = 'block';
                 return;
             }
 
             if (!password) {
-                showError('يرجى إدخال كلمة المرور.');
-                passwordInput.classList.add('error');
-                passwordInput.focus();
+                errorDiv.innerText = msg.passwordRequired;
+                errorDiv.style.display = 'block';
                 return;
             }
 
@@ -238,39 +199,106 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept-Language': langHeader
                     },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Save tokens
-                    if (data.tokens) {
-                        localStorage.setItem('access_token', data.tokens.access);
-                        localStorage.setItem('refresh_token', data.tokens.refresh);
-                    } else if (data.access && data.refresh) {
-                        localStorage.setItem('access_token', data.access);
-                        localStorage.setItem('refresh_token', data.refresh);
+                    // حفظ التوكنات واليوزر
+                    if (data.access) localStorage.setItem('access_token', data.access);
+                    if (data.refresh) localStorage.setItem('refresh_token', data.refresh);
+                    if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
+
+                    showToast(msg.success, "success");
+
+                    // نعطي المستخدم لحظة يشوف الرسالة
+                    setTimeout(() => {
+                        window.location.href = '../index.html';
+                    }, 1200);
+                }
+                else {
+                    let errorMsg = msg.loginFailed;
+
+                    if (data.detail) {
+                        errorMsg = data.detail;
+                    } else if (data.error) {
+                        errorMsg = data.error;
+                    } else if (data.message) {
+                        errorMsg = data.message;
                     }
 
-                    // Redirect to home
-                    window.location.href = '../index.html';
-                } else {
-                    // Show appropriate error message
-                    const errorMessage = getErrorMessage(data, response.status);
-                    showError(errorMessage);
+                    //  تعديل مهم على الشرط 
+                    if (isArabic && (errorMsg.includes('Invalid') || errorMsg.includes('email') || errorMsg.includes('password'))) {
+                        errorMsg = msg.invalidCredentials;
+                    }
 
-                    // Add error styling to inputs
-                    emailInput.classList.add('error');
-                    passwordInput.classList.add('error');
+                    errorDiv.innerText = errorMsg;
+                    errorDiv.style.display = 'block';
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showError('حدث خطأ في الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.');
+                errorDiv.innerText = msg.networkError;
+                errorDiv.style.display = 'block';
             }
         });
     </script>
+    <!--  إشعارات (Toast Notifications) -->
+    <div id="toast" style="
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    padding: 15px 20px;
+    border-radius: 10px;
+    background: #e74c3c;
+    color: white;
+    font-size: 1rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.4s;
+    z-index: 99999;
+"></div>
+
+    <script>
+        /*  عرض رسالة خطأ أو نجاح */
+        function showToast(message, type = "error") {
+            const toast = document.getElementById("toast");
+
+            // اللون حسب نوع الرسالة
+            toast.style.background = type === "success" ? "#27ae60" : "#e74c3c";
+
+            toast.textContent = message;
+            toast.style.opacity = "1";
+            toast.style.transform = "translateY(-10px)";
+
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translateY(0)";
+            }, 2500);
+        }
+
+        /*  تحديد لغة الجهاز */
+        function getLang() {
+            return navigator.language.toLowerCase().includes("ar") ? "ar" : "en";
+        }
+
+        /*  رسالة الخطأ باللغتين */
+        function getErrorMessage() {
+            const lang = getLang();
+            return lang === "ar"
+                ? "خطأ في تسجيل الدخول: تأكد من البريد الإلكتروني وكلمة المرور."
+                : "Login error: Please check your email and password.";
+        }
+    </script>
+
+
+
 </body>
 
 </html>
