@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
-from .models import User, Farm, Product, Order, OrderItem
+from .models import User, Farm, Product, Order, OrderItem, ContactMessage
 
 
 class UserSerializer(serializers.ModelSerializer):
