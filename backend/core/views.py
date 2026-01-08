@@ -7,14 +7,15 @@ from django.contrib.auth import authenticate
 from django.utils import timezone
 from django.db.models import Q
 
-from .models import User, Farm, Product, Order, OrderItem
+from .models import User, Farm, Product, Order, OrderItem, ContactMessage
 from .serializers import (
     UserSerializer, 
     UserRegistrationSerializer, 
     UserLoginSerializer,
     FarmSerializer,
     ProductSerializer,
-    OrderSerializer
+    OrderSerializer,
+    ContactMessageSerializer
 )
 
 
