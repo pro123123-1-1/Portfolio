@@ -13,6 +13,7 @@ python-dotenv = "==1.0.0"
 django-cors-headers = "==4.3.1"
 whitenoise = "==6.6.0"
 pillow = "*"
+requests = "*"
 
 [dev-packages]
 

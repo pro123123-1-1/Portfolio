@@ -4,6 +4,9 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import ProductsPage from './pages/ProductsPage'
 import CartPage from './pages/CartPage'
+import PaymentPage from './pages/PaymentPage'
+import PaymentSuccessPage from './pages/PaymentSuccessPage'
+import PaymentFailurePage from './pages/PaymentFailurePage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import ProfilePage from './pages/ProfilePage'
@@ -20,6 +23,9 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/payment/success" element={<PaymentSuccessPage />} />
+        <Route path="/payment/failure" element={<PaymentFailurePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/profile" element={<ProfilePage />} />

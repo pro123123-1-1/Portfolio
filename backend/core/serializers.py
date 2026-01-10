@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
-from .models import User, Farm, Product, Order, OrderItem, ContactMessage
+from .models import User, Farm, Product, Order, OrderItem, Payment, ContactMessage
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -152,6 +152,22 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'product_name', 'quantity', 'price']
         read_only_fields = ['id']
 
+        
+class PaymentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Payment model
+    """
+    order_id = serializers.IntegerField(source='order.id', read_only=True)
+    
+    class Meta:
+        model = Payment
+        fields = ['id', 'order', 'order_id', 'moyasar_payment_id', 'status', 
+                  'payment_method', 'amount', 'currency', 'description', 
+                  'payment_url', 'created_at', 'updated_at', 'paid_at']
+        read_only_fields = ['id', 'moyasar_payment_id', 'status', 'payment_url', 
+                           'created_at', 'updated_at', 'paid_at']
+
+
 
 class OrderSerializer(serializers.ModelSerializer):
     """
@@ -160,11 +176,23 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
     consumer_email = serializers.EmailField(source='consumer.email', read_only=True)
     farm_name = serializers.CharField(source='farm.name', read_only=True)
+    payment = PaymentSerializer(read_only=True)
+    
+    # Delivery fields
+    delivery_name = serializers.CharField(required=False, allow_blank=True)
+    delivery_phone = serializers.CharField(required=False, allow_blank=True)
+    delivery_address = serializers.CharField(required=False, allow_blank=True)
+    delivery_city = serializers.CharField(required=False, allow_blank=True)
+    delivery_region = serializers.CharField(required=False, allow_blank=True)
+    delivery_notes = serializers.CharField(required=False, allow_blank=True)
     
     class Meta:
         model = Order
         fields = ['id', 'consumer', 'consumer_email', 'farm', 'farm_name', 
-                  'status', 'total_amount', 'items', 'created_at', 'updated_at']
+                  'status', 'total_amount', 'items', 'payment', 
+                  'delivery_name', 'delivery_phone', 'delivery_address', 
+                  'delivery_city', 'delivery_region', 'delivery_notes',
+                  'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at', 'farm', 'participant', 'total_amount', 'consumer']
 
     def create(self, validated_data):
@@ -190,7 +218,13 @@ class OrderSerializer(serializers.ModelSerializer):
                 consumer=validated_data['consumer'],
                 farm_id=farm_id,
                 total_amount=total_amount,
-                status='pending'
+                status='pending',
+                delivery_name=validated_data.get('delivery_name', ''),
+                delivery_phone=validated_data.get('delivery_phone', ''),
+                delivery_address=validated_data.get('delivery_address', ''),
+                delivery_city=validated_data.get('delivery_city', ''),
+                delivery_region=validated_data.get('delivery_region', ''),
+                delivery_notes=validated_data.get('delivery_notes', '')
             )
             for item in items:
                 OrderItem.objects.create(
@@ -202,6 +236,8 @@ class OrderSerializer(serializers.ModelSerializer):
             orders.append(order)
             
         return orders[0] if orders else None
+
+
 
 
 class ContactMessageSerializer(serializers.ModelSerializer):

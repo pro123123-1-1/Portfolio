@@ -162,8 +162,14 @@ function CartPage() {
                       return
                     }
 
+                    if (cart.length === 0) {
+                      alert('السلة فارغة')
+                      return
+                    }
+
                     try {
-                      const response = await fetch('http://127.0.0.1:8001/api/orders/', {
+                      // First, create the order
+                      const orderResponse = await fetch('http://127.0.0.1:8001/api/orders/', {
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
@@ -178,14 +184,20 @@ function CartPage() {
                         })
                       })
 
-                      if (response.ok) {
-                        alert('تم إرسال الطلب بنجاح!')
+                      if (orderResponse.ok) {
+                        const orderData = await orderResponse.json()
+                        const orderId = orderData.id
+
+                        // Clear cart after successful order creation
                         setCart([])
                         localStorage.removeItem('cart')
+
+                        // Redirect to payment page
+                        navigate('/payment', { state: { orderId } })
                       } else {
-                        const errorData = await response.json()
+                        const errorData = await orderResponse.json()
                         console.error('Order Error:', errorData)
-                        alert('فشل إرسال الطلب: ' + JSON.stringify(errorData))
+                        alert('فشل إرسال الطلب: ' + (errorData.error || JSON.stringify(errorData)))
                       }
                     } catch (e) {
                       console.error(e)
@@ -193,7 +205,7 @@ function CartPage() {
                     }
                   }}
                 >
-                  إتمام الشراء
+                  <i className="fas fa-credit-card"></i> إتمام الشراء والدفع
                 </button>
               </div>
             </div>

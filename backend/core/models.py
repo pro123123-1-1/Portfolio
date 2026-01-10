@@ -156,6 +156,14 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='pending')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
+    # Delivery Information
+    delivery_name = models.CharField(max_length=200, blank=True, null=True)  # اسم المستلم
+    delivery_phone = models.CharField(max_length=15, blank=True, null=True)  # رقم الجوال للتوصيل
+    delivery_address = models.TextField(blank=True, null=True)  # العنوان الكامل
+    delivery_city = models.CharField(max_length=100, blank=True, null=True)  # المدينة
+    delivery_region = models.CharField(max_length=100, blank=True, null=True)  # المنطقة
+    delivery_notes = models.TextField(blank=True, null=True)  # ملاحظات إضافية للتوصيل
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -185,6 +193,50 @@ class OrderItem(models.Model):
     
     def __str__(self):
         return f"{self.product.name} x{self.quantity}"
+
+
+class Payment(models.Model):
+    """
+    Payment model - tracks payments for orders via Moyasar
+    """
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('paid', 'Paid'),
+        ('failed', 'Failed'),
+        ('cancelled', 'Cancelled'),
+    ]
+    
+    PAYMENT_METHOD_CHOICES = [
+        ('creditcard', 'Credit Card'),
+        ('mada', 'Mada'),
+        ('stcpay', 'STC Pay'),
+        ('applepay', 'Apple Pay'),
+    ]
+    
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='payment')
+    moyasar_payment_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, null=True, blank=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=3, default='SAR')
+    description = models.TextField(blank=True)
+    payment_url = models.URLField(max_length=500, blank=True, null=True)
+    
+    # Moyasar response data
+    moyasar_response = models.JSONField(default=dict, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    paid_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        db_table = 'payments'
+        verbose_name = 'Payment'
+        verbose_name_plural = 'Payments'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Payment #{self.id} - Order #{self.order.id} - {self.status}"
 
 
 class ContactMessage(models.Model):
