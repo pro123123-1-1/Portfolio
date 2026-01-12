@@ -2,6 +2,7 @@ erDiagram
     USER ||--o{ FARM : owns
     USER ||--o{ ORDER : places
     FARM ||--o{ PRODUCT : "offers"
+    PRODUCT ||--o{ QUANTITY : "has daily capacity"
     FARM ||--o{ ORDER : "receives"
     PRODUCT ||--o{ ORDER_ITEM : "included in"
     ORDER ||--o{ ORDER_ITEM : contains
@@ -35,6 +36,13 @@ erDiagram
         varchar unit "e.g. liter, kg"
         bool is_active
     }
+    QUANTITY {
+    int id PK
+    int product_id FK "references PRODUCT.id"
+    date date
+    int max_quantity
+    int reserved_quantity
+   }
 
     ORDER {
         int id PK
