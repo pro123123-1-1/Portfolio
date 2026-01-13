@@ -18,6 +18,7 @@ Frontend: **Web (HTML, CSS, JavaScript / React optional)**
 
 # 0. User Stories and Mockups
 
+The following user stories were prioritized using the MoSCoW method to ensure focus on core MVP functionality.
 
 
 ## Must Have
