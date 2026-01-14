@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.utils import timezone
 from django.contrib.auth.password_validation import validate_password
 from .models import User, Farm, Product, Order, OrderItem, Payment, ContactMessage
 
@@ -211,14 +212,48 @@ class OrderSerializer(serializers.ModelSerializer):
                 items_by_farm[farm_id] = []
             items_by_farm[farm_id].append(item)
             
+            
         orders = []
+        
+        # Check user's daily order limit
+        consumer = validated_data['consumer']
+        if consumer.daily_order_limit is not None:
+            today = timezone.now().date()
+            user_orders_today = Order.objects.filter(
+                consumer=consumer, 
+                created_at__date=today
+            ).exclude(status__in=['pending', 'cancelled']).count()
+            if user_orders_today >= consumer.daily_order_limit:
+                raise serializers.ValidationError(
+                    f"لقد وصلت للحد الأقصى من الطلبات اليومية ({consumer.daily_order_limit}). حاول مرة أخرى غداً."
+                )
+
+
         for farm_id, items in items_by_farm.items():
+            # Enforce daily order limit per farm
+            farm = Farm.objects.get(id=farm_id)
+            if farm.daily_capacity is not None:
+                today = timezone.now().date()
+                orders_today = Order.objects.filter(
+                    farm=farm, 
+                    created_at__date=today
+                ).exclude(status__in=['pending', 'cancelled']).count()
+                if orders_today >= farm.daily_capacity:
+                    raise serializers.ValidationError(
+                        f"الحد اليومي للطلبات للمزرعة {farm.name} هو {farm.daily_capacity}. لا يمكن إنشاء طلب جديد اليوم."
+                    )
+            import random
+            import string
+            random_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+            tracking_number = f"MK-{random_str}"
+
             total_amount = sum(item['price'] * item['quantity'] for item in items)
             order = Order.objects.create(
                 consumer=validated_data['consumer'],
                 farm_id=farm_id,
                 total_amount=total_amount,
                 status='pending',
+                tracking_number=tracking_number,
                 delivery_name=validated_data.get('delivery_name', ''),
                 delivery_phone=validated_data.get('delivery_phone', ''),
                 delivery_address=validated_data.get('delivery_address', ''),

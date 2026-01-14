@@ -11,13 +11,8 @@ function Header() {
     const token = localStorage.getItem('access_token')
     setIsLoggedIn(!!token)
 
-    // Basic check for role from localStorage if available, or fetch profile
-    // For MVP, valid assumption: if we have functionality that depends on role, we might want to store role in localStorage on login too
-    // or fetch it here. Let's fetch profile briefly or relying on localStorage 'user_role' if we saved it (we didn't yet).
-    // Let's modify valid login to save role, but for now let's fetch profile lightly or assume role is in token?
-    // Let's fetch profile to be sure
     if (token) {
-      fetch('http://127.0.0.1:8001/api/auth/profile/', { headers: { 'Authorization': `Bearer ${token}` } })
+      fetch('http://127.0.0.1:8000/api/auth/profile/', { headers: { 'Authorization': `Bearer ${token}` } })
         .then(res => res.json())
         .then(data => {
           if (data.role === 'farmer' || data.is_farmer) setIsFarmer(true)
@@ -25,10 +20,20 @@ function Header() {
         .catch(() => { })
     }
 
-    // Get cart count from localStorage
-    const cart = JSON.parse(localStorage.getItem('cart')) || []
-    const totalItems = cart.reduce((total, item) => total + item.quantity, 0)
-    setCartCount(totalItems)
+    // Function to update cart count from localStorage
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem('cart')) || []
+      const totalItems = cart.reduce((total, item) => total + item.quantity, 0)
+      setCartCount(totalItems)
+    }
+
+    // Listen for storage changes (for real-time updates across pages)
+    window.addEventListener('storage', updateCartCount)
+    updateCartCount() // Initial load
+
+    return () => {
+      window.removeEventListener('storage', updateCartCount)
+    }
   }, [])
 
   const handleLogout = () => {
@@ -52,6 +57,7 @@ function Header() {
             <ul>
               <li><Link to="/">الرئيسية</Link></li>
               <li><Link to="/products">منتجاتنا</Link></li>
+              <li><a href="/#order-status">حالة الطلب</a></li>
               <li><Link to="/farmers">المزارعين</Link></li>
               <li><Link to="/about">من نحن</Link></li>
               <li><Link to="/contact">اتصل بنا</Link></li>

@@ -558,6 +558,7 @@ def payment_success(request):
             'success': True,
             'payment_id': payment.id,
             'order_id': payment.order.id,
+            'tracking_number': payment.order.tracking_number,
             'status': payment.status,
             'amount': str(payment.amount)
         })

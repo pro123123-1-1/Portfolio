@@ -24,7 +24,7 @@ function ContactPage() {
     
     // هنا يمكن إضافة كود إرسال النموذج إلى الخادم
     try {
-      const response = await fetch('http://127.0.0.1:8001/api/contact/', {
+      const response = await fetch('http://127.0.0.1:8000/api/contact/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

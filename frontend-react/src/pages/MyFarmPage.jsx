@@ -7,6 +7,7 @@ function MyFarmPage() {
     const navigate = useNavigate()
     const [farm, setFarm] = useState(null)
     const [products, setProducts] = useState([])
+
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
@@ -55,7 +56,7 @@ function MyFarmPage() {
             // BUT standard way: GET /api/farms/?owner=<my_id>
 
             // First get profile to know ID
-            const profileRes = await fetch('http://127.0.0.1:8001/api/auth/profile/', {
+            const profileRes = await fetch('http://127.0.0.1:8000/api/auth/profile/', {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
             if (!profileRes.ok) throw new Error('Failed to get profile')
@@ -68,7 +69,7 @@ function MyFarmPage() {
             }
 
             // Now fetch farms filtered by owner ID
-            const farmsRes = await fetch(`http://127.0.0.1:8001/api/farms/?owner=${profile.id}`, {
+            const farmsRes = await fetch(`http://127.0.0.1:8000/api/farms/?owner=${profile.id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
             if (farmsRes.ok) {
@@ -79,6 +80,7 @@ function MyFarmPage() {
                     setFarm(myFarms[0])
                     // Fetch products for this farm
                     fetchProducts(myFarms[0].id)
+
                 } else {
                     setShowFarmForm(true) // No farm, show form to create one
                 }
@@ -94,7 +96,7 @@ function MyFarmPage() {
 
     const fetchProducts = async (farmId) => {
         try {
-            const res = await fetch(`http://127.0.0.1:8001/api/products/?farm=${farmId}`)
+            const res = await fetch(`http://127.0.0.1:8000/api/products/?farm=${farmId}`)
             const data = await res.json()
             if (data.results) {
                 setProducts(data.results)
@@ -106,11 +108,15 @@ function MyFarmPage() {
         }
     }
 
+
+
+
+
     const handleCreateFarm = async (e) => {
         e.preventDefault()
         try {
             const token = getToken()
-            const response = await fetch('http://127.0.0.1:8001/api/farms/', {
+            const response = await fetch('http://127.0.0.1:8000/api/farms/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -144,7 +150,7 @@ function MyFarmPage() {
                 farm: farm.id
             }
 
-            const response = await fetch('http://127.0.0.1:8001/api/products/', {
+            const response = await fetch('http://127.0.0.1:8000/api/products/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -173,7 +179,7 @@ function MyFarmPage() {
 
         try {
             const token = getToken()
-            const response = await fetch(`http://127.0.0.1:8001/api/products/${productId}/`, {
+            const response = await fetch(`http://127.0.0.1:8000/api/products/${productId}/`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -233,11 +239,7 @@ function MyFarmPage() {
 
                     {farm && (
                         <div>
-                            <div style={{ background: '#f9f9f9', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-                                <h3>{farm.name} <span style={{ fontSize: '0.6em', background: '#27ae60', color: 'white', padding: '3px 8px', borderRadius: '10px' }}>مزرعتي</span></h3>
-                                <p>{farm.description}</p>
-                                <p><strong>الموقع:</strong> <a href={farm.location} target="_blank">عرض على الخريطة</a></p>
-                            </div>
+
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                 <h3>منتجاتي</h3>

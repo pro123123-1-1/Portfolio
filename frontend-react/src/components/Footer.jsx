@@ -20,7 +20,8 @@ function Footer() {
             <ul>
               <li><Link to="/">الرئيسية</Link></li>
               <li><Link to="/products">منتجاتنا</Link></li>
-              <li><a href="#farmers">المزارعين</a></li>
+              <li><Link to="/track">تتبع طلبك</Link></li>
+              <li><Link to="/farmers">المزارعين</Link></li>
               <li><Link to="/about">من نحن</Link></li>
               <li><Link to="/contact">اتصل بنا</Link></li>
             </ul>

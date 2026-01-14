@@ -15,6 +15,11 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     is_farmer = models.BooleanField(default=False)
     is_consumer = models.BooleanField(default=True)  # Default to consumer
+    daily_order_limit = models.IntegerField(
+        default=5,
+        validators=[MinValueValidator(0)],
+        help_text="Maximum number of orders per day for this user"
+    )
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -163,6 +168,8 @@ class Order(models.Model):
     delivery_city = models.CharField(max_length=100, blank=True, null=True)  # المدينة
     delivery_region = models.CharField(max_length=100, blank=True, null=True)  # المنطقة
     delivery_notes = models.TextField(blank=True, null=True)  # ملاحظات إضافية للتوصيل
+    
+    tracking_number = models.CharField(max_length=50, unique=True, null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

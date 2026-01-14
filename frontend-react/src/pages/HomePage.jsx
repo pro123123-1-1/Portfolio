@@ -1,96 +1,82 @@
 import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import ProductCard from '../components/ProductCard'
 import { useState, useEffect } from 'react'
 
 function HomePage() {
-  const [cart, setCart] = useState([])
+  const [featuredProducts, setFeaturedProducts] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem('cart')) || []
-    setCart(savedCart)
+    fetchFeaturedProducts()
   }, [])
 
-  const addToCart = (product, price) => {
-    const savedCart = JSON.parse(localStorage.getItem('cart')) || []
-    const existingItem = savedCart.find(item => item.product === product)
-    
-    if (existingItem) {
-      existingItem.quantity += 1
-    } else {
-      savedCart.push({
-        product: product,
-        price: price,
-        quantity: 1
-      })
+  const fetchFeaturedProducts = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/products/')
+      if (response.ok) {
+        const data = await response.json()
+        const products = data.results || data
+        // Just show the first 4 products as featured
+        setFeaturedProducts(products.slice(0, 4))
+      }
+    } catch (err) {
+      console.error('Failed to fetch home products:', err)
+    } finally {
+      setLoading(false)
     }
-    
-    localStorage.setItem('cart', JSON.stringify(savedCart))
-    setCart(savedCart)
-    
-    // Show notification
-    alert(`${product} تمت الإضافة إلى السلة`)
   }
 
-  const generateStars = (rating) => {
-    const stars = []
-    const fullStars = Math.floor(rating)
-    const hasHalfStar = rating % 1 !== 0
-    
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<i key={i} className="fas fa-star"></i>)
-    }
-    
-    if (hasHalfStar) {
-      stars.push(<i key="half" className="fas fa-star-half-alt"></i>)
-    }
-    
-    const emptyStars = 5 - stars.length
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(<i key={`empty-${i}`} className="far fa-star"></i>)
-    }
-    
-    return stars
-  }
+  // Order Status Logic
+  const [latestOrder, setLatestOrder] = useState(null)
+  const [activeStep, setActiveStep] = useState(0) // 0: None, 1: Pending, 2: In Progress, 3: Completed
 
-  const featuredProducts = [
-    {
-      id: 1,
-      name: "تمر سكري",
-      price: 45,
-      farm: "مزرعة النخيل",
-      image: "https://images.unsplash.com/photo-1594736797933-d0d69e1e5d3f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      rating: 4.5,
-      reviews: 128
-    },
-    {
-      id: 2,
-      name: "فراولة طازجة",
-      price: 40,
-      farm: "مزرعة الفواكه",
-      image: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      rating: 4.2,
-      reviews: 95
-    },
-    {
-      id: 3,
-      name: "طماطم عضوية",
-      price: 15,
-      farm: "مزارع المملكة",
-      image: "https://images.unsplash.com/photo-1546470427-e212b7d310a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      rating: 4.8,
-      reviews: 210
-    },
-    {
-      id: 4,
-      name: "حليب طازج",
-      price: 12,
-      farm: "مزرعة الألبان",
-      image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      rating: 4.6,
-      reviews: 167
+  useEffect(() => {
+    const fetchLatestOrder = async () => {
+      const token = localStorage.getItem('access_token')
+      if (!token) return null
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/orders/', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+        if (response.ok) {
+          const data = await response.json()
+          const orders = data.results || data
+          if (orders.length > 0) {
+            return orders[0]
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch latest order:', err)
+      }
+      return null
     }
-  ]
+
+    const checkStatus = async () => {
+      const savedCart = JSON.parse(localStorage.getItem('cart')) || []
+      const order = await fetchLatestOrder()
+
+      setLatestOrder(order)
+
+      let step = 0
+      if (savedCart.length > 0) step = 1
+
+      if (order) {
+        const s = order.status
+        if (s === 'pending' || s === 'confirmed') step = 1
+        else if (s === 'preparing' || s === 'ready') step = 2
+        else if (s === 'completed') step = 3
+      }
+
+      setActiveStep(step)
+    }
+
+    checkStatus()
+    window.addEventListener('storage', checkStatus)
+    return () => window.removeEventListener('storage', checkStatus)
+  }, [])
 
   return (
     <>
@@ -110,6 +96,139 @@ function HomePage() {
             <div className="hero-buttons">
               <Link to="/products" className="btn-primary">استكشف منتجاتنا</Link>
               <Link to="/signup?role=farmer" className="btn-secondary">انضم كمزارع</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Order Status Section */}
+      <section id="order-status" className="order-status" style={{ padding: '100px 0', background: '#f8fafc' }}>
+        <div className="container">
+          <h2 className="section-title">نظام تتبع وحالة الطلب</h2>
+          <div className="tracking-card" style={{ maxWidth: '900px', margin: '0 auto' }}>
+            {latestOrder && (
+              <div className="order-meta-info">
+                <div className="meta-item">
+                  <span className="meta-label">رقم الطلب</span>
+                  <span className="meta-value">#{latestOrder.tracking_number || latestOrder.id}</span>
+                </div>
+                <div className="meta-item">
+                  <span className="meta-label">تاريخ الطلب</span>
+                  <span className="meta-value">{new Date(latestOrder.created_at).toLocaleDateString('ar-SA')}</span>
+                </div>
+                <div className="meta-item" style={{ textAlign: 'left' }}>
+                  <span className="meta-label">إجمالي المبلغ</span>
+                  <span className="meta-value">{latestOrder.total_amount} ر.س</span>
+                </div>
+              </div>
+            )}
+
+            <div style={{ position: 'relative', marginTop: latestOrder ? '0' : '20px' }}>
+              {/* Progress Line Background */}
+              <div style={{
+                position: 'absolute',
+                top: '25px',
+                left: '60px',
+                right: '60px',
+                height: '4px',
+                background: '#f1f5f9',
+                zIndex: 0,
+                borderRadius: '2px'
+              }}>
+                {/* Active Progress Line */}
+                <div style={{
+                  height: '100%',
+                  width: activeStep === 0 ? '0%' : activeStep === 1 ? '0%' : activeStep === 2 ? '50%' : '100%',
+                  background: '#2d5a27',
+                  transition: 'width 0.8s cubic-bezier(0.65, 0, 0.35, 1)',
+                  borderRadius: '2px'
+                }}></div>
+              </div>
+
+              {/* Steps Layout */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
+                {/* Step 1: Pending */}
+                <div style={{ textAlign: 'center', width: '120px' }} className={activeStep >= 1 ? 'step-completed' : ''}>
+                  <div className={`step-icon-animated ${activeStep === 1 ? 'stepper-active-pulse' : ''}`} style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '16px',
+                    background: activeStep >= 1 ? '#2d5a27' : 'white',
+                    color: activeStep >= 1 ? 'white' : '#94a3b8',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 16px auto',
+                    border: `2px solid ${activeStep >= 1 ? '#2d5a27' : '#e2e8f0'}`,
+                    fontSize: '1.2rem',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.02)'
+                  }}>
+                    <i className="fas fa-shopping-basket"></i>
+                  </div>
+                  <div className="status-label">قيد الانتظار</div>
+                  <div className="status-desc">{activeStep >= 1 ? 'تم استلام الطلب' : 'بانتظار التأكيد'}</div>
+                </div>
+
+                {/* Step 2: Processing */}
+                <div style={{ textAlign: 'center', width: '120px' }} className={activeStep >= 2 ? 'step-completed' : ''}>
+                  <div className={`step-icon-animated ${activeStep === 2 ? 'stepper-active-pulse' : ''}`} style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '16px',
+                    background: activeStep >= 2 ? '#2d5a27' : 'white',
+                    color: activeStep >= 2 ? 'white' : '#94a3b8',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 16px auto',
+                    border: `2px solid ${activeStep >= 2 ? '#2d5a27' : '#e2e8f0'}`,
+                    fontSize: '1.2rem',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.02)'
+                  }}>
+                    <i className="fas fa-box-open"></i>
+                  </div>
+                  <div className="status-label">جاري التجهيز</div>
+                  <div className="status-desc">{activeStep >= 2 ? 'يتم تحضير المنتجات' : 'في انتظار التجهيز'}</div>
+                </div>
+
+                {/* Step 3: Completed */}
+                <div style={{ textAlign: 'center', width: '120px' }} className={activeStep >= 3 ? 'step-completed' : ''}>
+                  <div className={`step-icon-animated ${activeStep === 3 ? 'stepper-active-pulse' : ''}`} style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '16px',
+                    background: activeStep >= 3 ? '#2d5a27' : 'white',
+                    color: activeStep >= 3 ? 'white' : '#94a3b8',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 16px auto',
+                    border: `2px solid ${activeStep >= 3 ? '#2d5a27' : '#e2e8f0'}`,
+                    fontSize: '1.2rem',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.02)'
+                  }}>
+                    <i className="fas fa-check-circle"></i>
+                  </div>
+                  <div className="status-label">تم التوصيل</div>
+                  <div className="status-desc">{activeStep >= 3 ? 'وصل طلبك بنجاح' : 'بانتظار وصول الطلب'}</div>
+                </div>
+              </div>
+
+              {/* Status Desc */}
+              {/* Footer Status Context */}
+              <div style={{
+                marginTop: '40px',
+                paddingTop: '25px',
+                borderTop: '1px solid #f1f5f9',
+                textAlign: 'center'
+              }}>
+                <p style={{ margin: 0, color: '#475569', fontSize: '0.95rem' }}>
+                  {activeStep === 0 && "مرحباً بك! يمكنك البدء بإضافة المنتجات الطازجة لسلتك لتتبع حالتها هنا."}
+                  {activeStep === 1 && "نعمل حالياً على مراجعة طلبك لضمان جودة المنتجات قبل البدء في التجهيز."}
+                  {activeStep === 2 && "رائع! منتجاتك الآن يتم قطفها وتحضيرها بعناية فائقة لتصلك طازجة."}
+                  {activeStep === 3 && "سعدنا بخدمتكم! نأمل أن تنال منتجاتنا رضاكم، ونتطلع لخدمتكم مرة أخرى."}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -146,28 +265,19 @@ function HomePage() {
       <section className="featured-products">
         <div className="container">
           <h2 className="section-title">منتجاتنا المميزة</h2>
-          <div className="products-grid">
-            {featuredProducts.map(product => (
-              <div key={product.id} className="product-card">
-                <div className="product-image" style={{ backgroundImage: `url('${product.image}')` }}></div>
-                <div className="product-info">
-                  <h3>{product.name}</h3>
-                  <div className="product-price">{product.price} ريال / كجم</div>
-                  <div className="product-farm">{product.farm}</div>
-                  <div className="product-rating">
-                    {generateStars(product.rating)}
-                    <span>({product.reviews})</span>
-                  </div>
-                  <button 
-                    className="btn-primary" 
-                    onClick={() => addToCart(product.name, product.price)}
-                  >
-                    أضف إلى السلة
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>جاري التحميل...</div>
+          ) : (
+            <div className="products-grid">
+              {featuredProducts.length > 0 ? (
+                featuredProducts.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))
+              ) : (
+                <p style={{ textAlign: 'center', gridColumn: '1/-1' }}>لا توجد منتجات مميزة حالياً</p>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
@@ -212,4 +322,3 @@ function HomePage() {
 }
 
 export default HomePage
-

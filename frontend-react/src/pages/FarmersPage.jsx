@@ -14,7 +14,7 @@ function FarmersPage() {
 
     const fetchFarms = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8001/api/farms/')
+            const response = await fetch('http://127.0.0.1:8000/api/farms/')
             if (!response.ok) {
                 throw new Error('Failed to fetch farms')
             }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import ProductCard from '../components/ProductCard'
 
 function ProductsPage() {
   const [products, setProducts] = useState([])
@@ -17,7 +18,7 @@ function ProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8001/api/products/')
+      const response = await fetch('http://127.0.0.1:8000/api/products/')
       if (!response.ok) {
         throw new Error('Failed to fetch products')
       }
@@ -46,48 +47,6 @@ function ProductsPage() {
     }
     return true
   })
-
-  const addToCart = (productName, price) => {
-    const savedCart = JSON.parse(localStorage.getItem('cart')) || []
-    const existingItem = savedCart.find(item => item.product === productName)
-
-    if (existingItem) {
-      existingItem.quantity += 1
-    } else {
-      savedCart.push({
-        product: productName,
-        price: parseFloat(price),
-        quantity: 1
-      })
-    }
-
-    localStorage.setItem('cart', JSON.stringify(savedCart))
-    // Dispatch custom event to notify Header
-    window.dispatchEvent(new Event('storage'))
-    alert(`${productName} تمت الإضافة إلى السلة`)
-  }
-
-  const generateStars = (rating = 0) => {
-    // Default rating if not provided (backend doesn't support rating yet)
-    const stars = []
-    const fullStars = Math.floor(rating)
-    const hasHalfStar = rating % 1 !== 0
-
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<i key={i} className="fas fa-star"></i>)
-    }
-
-    if (hasHalfStar) {
-      stars.push(<i key="half" className="fas fa-star-half-alt"></i>)
-    }
-
-    const emptyStars = 5 - stars.length
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(<i key={`empty-${i}`} className="far fa-star"></i>)
-    }
-
-    return stars
-  }
 
   if (loading) return <div style={{ textAlign: 'center', marginTop: '100px' }}>جاري التحميل...</div>
 
@@ -135,24 +94,7 @@ function ProductsPage() {
               <p style={{ textAlign: 'center', gridColumn: '1/-1' }}>لا توجد منتجات تطابق معايير البحث</p>
             ) : (
               filteredProducts.map(product => (
-                <div key={product.id} className="product-card">
-                  <div className="product-image" style={{ backgroundImage: `url('${product.image || product.image_url || 'https://via.placeholder.com/300'}')` }}></div>
-                  <div className="product-info">
-                    <h3>{product.name}</h3>
-                    <div className="product-price">{product.price} ريال / {product.unit}</div>
-                    <div className="product-farm">{product.farm_name}</div>
-                    <div className="product-rating">
-                      {generateStars(product.rating || 4.5)}
-                      <span>({product.reviews || 0})</span>
-                    </div>
-                    <button
-                      className="btn-primary"
-                      onClick={() => addToCart(product, product.price)}
-                    >
-                      أضف إلى السلة
-                    </button>
-                  </div>
-                </div>
+                <ProductCard key={product.id} product={product} />
               ))
             )}
           </div>

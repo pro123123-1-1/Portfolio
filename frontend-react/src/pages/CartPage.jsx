@@ -2,42 +2,98 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import Notification from '../components/Notification'
 
 function CartPage() {
   const [cart, setCart] = useState([])
+  const [notification, setNotification] = useState({ isVisible: false, message: '', type: 'info', persist: false })
   const navigate = useNavigate()
 
+  const showNotification = (message, type = 'warning', persist = false) => {
+    setNotification({ isVisible: true, message, type, persist })
+  }
+
   useEffect(() => {
-    let savedCart = JSON.parse(localStorage.getItem('cart')) || []
+    // Load cart and attempt to repair missing IDs by fetching from backend
+    const initializeCart = async () => {
+      let savedCart = JSON.parse(localStorage.getItem('cart')) || []
 
-    // Sanitize corrupted data (fix for crash where product is an object)
-    savedCart = savedCart.map(item => {
-      if (typeof item.product === 'object' && item.product !== null) {
-        return {
-          ...item,
-          product_id: item.product.id,
-          product: item.product.name // Fix object to string
+      try {
+        // Fetch valid products to reconcile IDs
+        const response = await fetch('http://127.0.0.1:8000/api/products/')
+        if (response.ok) {
+          const data = await response.json()
+          const products = data.results || data // Handle pagination if present
+
+          // Create lookup map: Name -> ID
+          const productMap = {}
+          products.forEach(p => {
+            productMap[p.name] = p.id
+            // Also map by "english/arabic" variations if known, but for now exact name
+          })
+
+          savedCart = savedCart.map(item => {
+            let newItem = { ...item }
+
+            // 1. Fix object structure
+            if (typeof item.product === 'object' && item.product !== null) {
+              newItem.product_id = item.product.id
+              newItem.product = item.product.name
+            }
+
+            // 2. Fix missing ID by looking up name
+            if (!newItem.product_id && productMap[newItem.product]) {
+              newItem.product_id = productMap[newItem.product]
+              console.log(`Repaired product ID for ${newItem.product} -> ${newItem.product_id}`)
+            }
+
+            // 3. Normalized numeric values
+            newItem.price = parseFloat(item.price) || 0
+            newItem.quantity = parseInt(item.quantity) || 1
+
+            return newItem
+          }).filter(item => item.product_id) // Remove items we couldn't repair (prevents 404s/500s)
         }
+      } catch (e) {
+        console.error("Failed to fetch products for cart repair", e)
       }
-      return item
-    })
 
-    setCart(savedCart)
-    localStorage.setItem('cart', JSON.stringify(savedCart)) // Save fixed data
+      setCart(savedCart)
+      localStorage.setItem('cart', JSON.stringify(savedCart))
+    }
+
+    initializeCart()
   }, [])
+
+  // Combined effect to handle persistent warnings based on cart state
+  useEffect(() => {
+    const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0)
+    if (totalQuantity > 10) {
+      if (!notification.isVisible || notification.message !== 'عذراً، نود تنبيهك بأن طلبك يحتوي الآن على أكثر من 10 منتجات. يرجى مراجعة الكميات المختارة لضمان دقة الطلب وتفادي أي تأخير.') {
+        showNotification('عذراً، نود تنبيهك بأن طلبك يحتوي الآن على أكثر من 10 منتجات. يرجى مراجعة الكميات المختارة لضمان دقة الطلب وتفادي أي تأخير.', 'warning', true)
+      }
+    } else if (notification.persist && notification.type === 'warning') {
+      setNotification(prev => ({ ...prev, isVisible: false }))
+    }
+  }, [cart])
 
   const updateQuantity = (product, newQuantity) => {
     const updatedCart = cart.map(item =>
       item.product === product ? { ...item, quantity: newQuantity } : item
     )
+
     setCart(updatedCart)
     localStorage.setItem('cart', JSON.stringify(updatedCart))
+    // Notify Header
+    window.dispatchEvent(new Event('storage'))
   }
 
   const removeItem = (product) => {
     const updatedCart = cart.filter(item => item.product !== product)
     setCart(updatedCart)
     localStorage.setItem('cart', JSON.stringify(updatedCart))
+    // Notify Header
+    window.dispatchEvent(new Event('storage'))
   }
 
   const itemsCount = cart.reduce((total, item) => total + item.quantity, 0)
@@ -48,6 +104,15 @@ function CartPage() {
   return (
     <>
       <Header />
+      <div className="notification-container">
+        <Notification
+          isVisible={notification.isVisible}
+          message={notification.message}
+          type={notification.type}
+          persist={notification.persist}
+          onClose={() => setNotification({ ...notification, isVisible: false })}
+        />
+      </div>
       <div style={{ marginTop: '100px', padding: '40px 0', minHeight: 'calc(100vh - 200px)' }}>
         <div className="container">
           <h2 className="section-title">عربة التسوق</h2>
@@ -153,8 +218,17 @@ function CartPage() {
                 </div>
                 <button
                   className="btn-primary"
-                  style={{ width: '100%', padding: '12px' }}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    opacity: itemsCount > 10 ? 0.6 : 1,
+                    cursor: itemsCount > 10 ? 'not-allowed' : 'pointer',
+                    background: itemsCount > 10 ? '#94a3b8' : undefined
+                  }}
+                  disabled={itemsCount > 10}
                   onClick={async () => {
+                    if (itemsCount > 10) return;
+
                     const token = localStorage.getItem('access_token')
                     if (!token) {
                       alert('يجب تسجيل الدخول لإتمام الطلب')
@@ -169,7 +243,7 @@ function CartPage() {
 
                     try {
                       // First, create the order
-                      const orderResponse = await fetch('http://127.0.0.1:8001/api/orders/', {
+                      const orderResponse = await fetch('http://127.0.0.1:8000/api/orders/', {
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
@@ -177,7 +251,7 @@ function CartPage() {
                         },
                         body: JSON.stringify({
                           items: cart.map(item => ({
-                            product: item.product_id || 1,
+                            product: item.product_id,
                             quantity: item.quantity,
                             price: item.price
                           }))
@@ -188,12 +262,13 @@ function CartPage() {
                         const orderData = await orderResponse.json()
                         const orderId = orderData.id
 
-                        // Clear cart after successful order creation
-                        setCart([])
-                        localStorage.removeItem('cart')
-
                         // Redirect to payment page
                         navigate('/payment', { state: { orderId } })
+                      } else if (orderResponse.status === 401) {
+                        localStorage.removeItem('access_token')
+                        localStorage.removeItem('refresh_token')
+                        alert('جلسة العمل انتهت، يرجى تسجيل الدخول مرة أخرى')
+                        navigate('/login')
                       } else {
                         const errorData = await orderResponse.json()
                         console.error('Order Error:', errorData)

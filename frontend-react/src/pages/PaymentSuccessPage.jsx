@@ -32,7 +32,7 @@ function PaymentSuccessPage() {
         return
       }
 
-      let url = 'http://127.0.0.1:8001/api/payments/success/'
+      let url = 'http://127.0.0.1:8000/api/payments/success/'
       if (paymentId) {
         url += `?id=${paymentId}`
       } else if (orderId) {
@@ -49,6 +49,9 @@ function PaymentSuccessPage() {
 
       if (response.ok && data.success) {
         setPaymentData(data)
+        // Clear cart ONLY after successful payment
+        localStorage.removeItem('cart')
+        window.dispatchEvent(new Event('storage'))
       } else {
         setError(data.error || 'فشل في التحقق من الدفع')
       }
@@ -127,22 +130,36 @@ function PaymentSuccessPage() {
                 <div style={{ marginBottom: '15px' }}>
                   <strong>رقم الطلب:</strong> #{paymentData.order_id}
                 </div>
+                {paymentData.tracking_number && (
+                  <div style={{ marginBottom: '15px' }}>
+                    <strong>رقم التتبع:</strong> <span style={{ color: '#27ae60', fontWeight: 'bold' }}>{paymentData.tracking_number}</span>
+                  </div>
+                )}
                 <div style={{ marginBottom: '15px' }}>
                   <strong>المبلغ المدفوع:</strong> {paymentData.amount} ر.س
                 </div>
                 <div>
-                  <strong>حالة الدفع:</strong> 
+                  <strong>حالة الدفع:</strong>
                   <span style={{ color: '#27ae60', marginRight: '10px' }}>✓ مدفوع</span>
                 </div>
               </div>
             )}
 
             <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              {paymentData?.tracking_number && (
+                <button
+                  className="btn-primary"
+                  onClick={() => navigate(`/track/${paymentData.tracking_number}`)}
+                  style={{ background: '#27ae60' }}
+                >
+                  <i className="fas fa-truck"></i> تتبع الطلب
+                </button>
+              )}
               <button className="btn-primary" onClick={() => navigate('/orders')}>
                 <i className="fas fa-list"></i> عرض طلباتي
               </button>
-              <button 
-                className="btn-secondary" 
+              <button
+                className="btn-secondary"
                 onClick={() => navigate('/products')}
                 style={{ background: '#95a5a6', border: 'none' }}
               >
