@@ -21,6 +21,18 @@ function OrdersPage() {
         'cancelled': { label: 'ملغي', color: '#e74c3c' }
     }
 
+    const statusSteps = [
+        { id: 'pending', label: 'قيد الانتظار', icon: 'fas fa-clock', color: '#f39c12' },
+        { id: 'confirmed', label: 'تم التأكيد', icon: 'fas fa-check-circle', color: '#27ae60' },
+        { id: 'preparing', label: 'قيد التجهيز', icon: 'fas fa-box-open', color: '#2ecc71' },
+        { id: 'ready', label: 'جاهز للتوصيل', icon: 'fas fa-truck-loading', color: '#3498db' },
+        { id: 'completed', label: 'تم التوصيل', icon: 'fas fa-box', color: '#2c3e50' }
+    ]
+
+    const getCurrentStepIndex = (status) => {
+        return statusSteps.findIndex(step => step.id === status)
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('access_token')
@@ -178,7 +190,7 @@ function OrdersPage() {
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
                                         <div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
-                                                <h4 style={{ margin: 0, fontSize: '1.4rem', color: '#2d3748' }}>طلب #{order.id}</h4>
+                                                <h4 style={{ margin: 0, fontSize: '1.4rem', color: '#2d3748' }}>رقم الطلب: {order.tracking_number}</h4>
                                                 <span style={{
                                                     background: statusMap[order.status]?.color + '15',
                                                     color: statusMap[order.status]?.color,
@@ -196,30 +208,102 @@ function OrdersPage() {
                                             </p>
                                         </div>
                                         <div style={{ textAlign: 'left' }}>
-                                            <p style={{ margin: 0, color: '#718096', fontSize: '0.85rem' }}>رقم التتبع:</p>
-                                            <div style={{
-                                                background: '#f8fafc',
-                                                padding: '8px 15px',
-                                                borderRadius: '10px',
-                                                border: '1px solid #e2e8f0',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '10px'
-                                            }}>
-                                                <code style={{ fontWeight: 'bold', color: '#2d5a27', fontSize: '1rem' }}>{order.tracking_number}</code>
-                                                <button
-                                                    onClick={() => {
-                                                        navigator.clipboard.writeText(order.tracking_number)
-                                                        alert('تم نسخ رقم التتبع!')
-                                                    }}
-                                                    title="نسخ رقم التتبع"
-                                                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3182ce' }}
-                                                >
-                                                    <i className="far fa-copy"></i>
-                                                </button>
-                                            </div>
+                                            <button
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(order.tracking_number)
+                                                    alert('تم نسخ رقم الطلب!')
+                                                }}
+                                                title="نسخ رقم الطلب"
+                                                className="btn-text"
+                                                style={{
+                                                    background: 'none',
+                                                    border: '1px solid #e2e8f0',
+                                                    padding: '5px 10px',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    color: '#718096',
+                                                    fontSize: '0.9rem'
+                                                }}
+                                            >
+                                                <i className="far fa-copy" style={{ marginLeft: '5px' }}></i>
+                                                نسخ الرقم
+                                            </button>
                                         </div>
                                     </div>
+
+                                    {/* Premium Stepper Integration */}
+                                    {activeTab === 'purchases' && !order.status.includes('cancelled') && (
+                                        <div style={{
+                                            margin: '40px 0',
+                                            padding: '20px 0',
+                                            borderTop: '1px dashed #e2e8f0',
+                                            borderBottom: '1px dashed #e2e8f0'
+                                        }}>
+                                            <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', padding: '0 10px' }}>
+                                                {/* Background Line */}
+                                                <div style={{
+                                                    position: 'absolute',
+                                                    top: '25px',
+                                                    left: '30px',
+                                                    right: '30px',
+                                                    height: '4px',
+                                                    background: '#edf2f7',
+                                                    borderRadius: '2px',
+                                                    zIndex: 0
+                                                }}></div>
+
+                                                {/* Active Progress Line */}
+                                                <div style={{
+                                                    position: 'absolute',
+                                                    top: '25px',
+                                                    right: '30px',
+                                                    width: `calc(${Math.max(0, getCurrentStepIndex(order.status)) / (statusSteps.length - 1) * 100}% - 30px)`,
+                                                    height: '4px',
+                                                    background: '#2d5a27',
+                                                    borderRadius: '2px',
+                                                    zIndex: 1,
+                                                    transition: 'width 0.8s ease'
+                                                }}></div>
+
+                                                {/* Steps */}
+                                                {statusSteps.map((step, index) => {
+                                                    const isCompleted = getCurrentStepIndex(order.status) >= index;
+                                                    const isActive = order.status === step.id;
+
+                                                    return (
+                                                        <div key={step.id} style={{ zIndex: 2, textAlign: 'center', width: '60px' }}>
+                                                            <div style={{
+                                                                width: '40px',
+                                                                height: '40px',
+                                                                borderRadius: '50%',
+                                                                background: isCompleted ? '#2d5a27' : 'white',
+                                                                border: `3px solid ${isCompleted ? '#2d5a27' : '#edf2f7'}`,
+                                                                color: isCompleted ? 'white' : '#cbd5e0',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                margin: '0 auto 10px',
+                                                                fontSize: '14px',
+                                                                boxShadow: isActive ? '0 0 0 5px rgba(45, 90, 39, 0.1)' : 'none',
+                                                                transition: 'all 0.3s ease'
+                                                            }}>
+                                                                <i className={step.icon}></i>
+                                                            </div>
+                                                            <p style={{
+                                                                fontSize: '11px',
+                                                                fontWeight: isActive ? 'bold' : '500',
+                                                                color: isCompleted ? '#2d5a27' : '#a0aec0',
+                                                                whiteSpace: 'nowrap',
+                                                                margin: 0
+                                                            }}>
+                                                                {step.label}
+                                                            </p>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
 
                                     <div style={{
                                         display: 'grid',
@@ -250,39 +334,27 @@ function OrdersPage() {
                                         )}
                                     </div>
 
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
-                                        <div style={{ display: 'flex', gap: '10px' }}>
-                                            <button
-                                                onClick={() => navigate(`/track/${order.tracking_number}`)}
-                                                className="btn-secondary"
-                                                style={{ padding: '8px 20px', fontSize: '0.9rem' }}
+                                    {activeTab === 'sales' && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+                                            <label style={{ fontSize: '0.9rem', color: '#718096' }}>تحديث الحالة:</label>
+                                            <select
+                                                value={order.status}
+                                                onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
+                                                disabled={updatingStatus === order.id}
+                                                style={{
+                                                    padding: '8px',
+                                                    borderRadius: '10px',
+                                                    border: '1px solid #edf2f7',
+                                                    outline: 'none',
+                                                    cursor: 'pointer'
+                                                }}
                                             >
-                                                <i className="fas fa-map-marker-alt" style={{ marginLeft: '5px' }}></i> تتبع الطلب
-                                            </button>
+                                                {Object.entries(statusMap).map(([key, val]) => (
+                                                    <option key={key} value={key}>{val.label}</option>
+                                                ))}
+                                            </select>
                                         </div>
-
-                                        {activeTab === 'sales' && (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                <label style={{ fontSize: '0.9rem', color: '#718096' }}>تحديث الحالة:</label>
-                                                <select
-                                                    value={order.status}
-                                                    onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
-                                                    disabled={updatingStatus === order.id}
-                                                    style={{
-                                                        padding: '8px',
-                                                        borderRadius: '10px',
-                                                        border: '1px solid #edf2f7',
-                                                        outline: 'none',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                >
-                                                    {Object.entries(statusMap).map(([key, val]) => (
-                                                        <option key={key} value={key}>{val.label}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        )}
-                                    </div>
+                                    )}
                                 </div>
                             ))}
                         </div>

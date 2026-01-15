@@ -28,15 +28,22 @@ function CartPage() {
           const data = await response.json()
           const products = data.results || data
 
-          const productMap = {}
+          const productInfoMap = {}
           products.forEach(p => {
-            productMap[p.name] = p.id
+            productInfoMap[p.name] = {
+              id: p.id,
+              farm_name: p.farm_name || p.farm
+            }
           })
 
           const updatedCart = savedCart.map(item => {
             const newItem = { ...item }
-            if (!newItem.product_id && productMap[item.product]) {
-              newItem.product_id = productMap[item.product]
+            const info = productInfoMap[item.product]
+
+            if (info) {
+              if (!newItem.product_id) newItem.product_id = info.id
+              // Ensure farm_name is up to date
+              newItem.farm_name = info.farm_name
             }
             return newItem
           })
@@ -135,6 +142,10 @@ function CartPage() {
                     }}></div>
                     <div style={{ flex: 1 }}>
                       <h3>{item.product}</h3>
+                      <div style={{ fontSize: '0.9rem', color: '#2d5a27', marginBottom: '5px' }}>
+                        <i className="fas fa-tractor" style={{ marginLeft: '5px' }}></i>
+                        {item.farm_name}
+                      </div>
                       <div style={{ color: '#666', marginBottom: '10px' }}>{item.price} ر.س / كجم</div>
                       <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                         <button

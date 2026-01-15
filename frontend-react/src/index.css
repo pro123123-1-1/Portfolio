@@ -6,9 +6,18 @@
     font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+body,
+button,
+input,
+textarea,
+select,
+optgroup {
+    font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 :root {
     --primary-color: #2d5a27;
-    --secondary-color: #4caf50;
+    --secondary-color: #2d5a27;
     --accent-color: #ff9800;
     --text-color: #333;
     --light-bg: #f9f9f9;
@@ -572,7 +581,7 @@ nav ul li a:hover::after {
 
 .categories-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 30px;
 }
 
@@ -623,7 +632,7 @@ nav ul li a:hover::after {
 
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 30px;
 }
 
@@ -705,7 +714,7 @@ nav ul li a:hover::after {
 
 .farmers-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 30px;
 }
 
@@ -872,8 +881,16 @@ footer {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Auth Container Hover */
+
+/* Auth Container Box */
 .auth-container {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 2rem;
+    width: 100%;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
     transition: all 0.3s ease;
 }
 
@@ -1024,6 +1041,10 @@ footer {
     pointer-events: auto;
     animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1), fadeOut 0.4s ease forwards 4.6s;
     border-right: 4px solid var(--primary-color);
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
 }
 
 .notification-toast.warning {

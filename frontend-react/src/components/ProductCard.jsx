@@ -1,35 +1,10 @@
 import { useState, useEffect } from 'react'
-import Notification from './Notification'
+import { useNotification } from '../context/NotificationContext'
 
 function ProductCard({ product }) {
     const [inCart, setInCart] = useState(false)
-    const [notification, setNotification] = useState({ isVisible: false, message: '', type: 'info', persist: false })
+    const { showNotification } = useNotification()
 
-    const showNotification = (message, type = 'warning', persist = false) => {
-        setNotification({ isVisible: true, message, type, persist })
-    }
-
-    // Star generation logic (shared)
-    const generateStars = (rating = 0) => {
-        const stars = []
-        const fullStars = Math.floor(rating)
-        const hasHalfStar = rating % 1 !== 0
-
-        for (let i = 0; i < fullStars; i++) {
-            stars.push(<i key={i} className="fas fa-star"></i>)
-        }
-
-        if (hasHalfStar) {
-            stars.push(<i key="half" className="fas fa-star-half-alt"></i>)
-        }
-
-        const emptyStars = 5 - stars.length
-        for (let i = 0; i < emptyStars; i++) {
-            stars.push(<i key={`empty-${i}`} className="far fa-star"></i>)
-        }
-
-        return stars
-    }
 
     const addToCart = (productObj) => {
         const savedCart = JSON.parse(localStorage.getItem('cart')) || []
@@ -59,7 +34,8 @@ function ProductCard({ product }) {
                 product: productObj.name,
                 product_id: productObj.id,
                 price: parseFloat(productObj.price),
-                quantity: 1
+                quantity: 1,
+                farm_name: productObj.farm_name || productObj.farm
             })
         }
 
@@ -72,25 +48,18 @@ function ProductCard({ product }) {
 
     return (
         <div className="product-card" style={{ position: 'relative' }}>
-            <Notification
-                isVisible={notification.isVisible}
-                message={notification.message}
-                type={notification.type}
-                persist={notification.persist}
-                onClose={() => setNotification({ ...notification, isVisible: false })}
-            />
             <div
                 className="product-image"
                 style={{ backgroundImage: `url('${product.image || product.image_url || 'https://via.placeholder.com/300'}')` }}
             ></div>
             <div className="product-info">
                 <h3>{product.name}</h3>
-                <div className="product-price">{product.price} ريال / {product.unit || 'كجم'}</div>
-                <div className="product-farm">{product.farm_name || product.farm}</div>
-                <div className="product-rating">
-                    {generateStars(product.rating || 4.5)}
-                    <span>({product.reviews || 0})</span>
+                <div className="product-price">{product.price} ريال</div>
+                <div style={{ color: '#666', fontSize: '0.9rem', marginBottom: '5px' }}>
+                    <i className="fas fa-info-circle" style={{ marginLeft: '5px' }}></i>
+                    {product.unit} في الوحدة الواحدة
                 </div>
+                <div className="product-farm">{product.farm_name || product.farm}</div>
                 <button
                     className="btn-primary"
                     onClick={() => addToCart(product)}

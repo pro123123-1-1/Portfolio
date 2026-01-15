@@ -161,10 +161,10 @@ function PaymentSuccessPage() {
               {paymentData?.tracking_number && (
                 <button
                   className="btn-primary"
-                  onClick={() => navigate(`/track/${paymentData.tracking_number}`)}
+                  onClick={() => navigate('/orders')}
                   style={{ background: '#27ae60' }}
                 >
-                  <i className="fas fa-truck"></i> تتبع الطلب
+                  <i className="fas fa-list-ul"></i> متابعة الطلب
                 </button>
               )}
               <button className="btn-primary" onClick={() => navigate('/orders')}>
