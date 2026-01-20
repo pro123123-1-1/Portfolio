@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { Link } from 'react-router-dom'
+import API_BASE_URL from '../apiConfig'
 
 function FarmersPage() {
     const [farms, setFarms] = useState([])
@@ -14,7 +15,7 @@ function FarmersPage() {
 
     const fetchFarms = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/farms/')
+            const response = await fetch(`${API_BASE_URL}/api/farms/`)
             if (!response.ok) {
                 throw new Error('Failed to fetch farms')
             }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import API_BASE_URL from '../apiConfig'
 
 function PaymentSuccessPage() {
   const [paymentData, setPaymentData] = useState(null)
@@ -32,7 +33,7 @@ function PaymentSuccessPage() {
         return
       }
 
-      let url = 'http://localhost:8000/api/payments/verify/'
+      let url = `${API_BASE_URL}/api/payments/verify/`
       if (paymentId) {
         url += `?id=${paymentId}`
       } else if (orderId) {

@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
+import API_BASE_URL from '../apiConfig'
+
 function PaymentPage() {
   const [paymentUrl, setPaymentUrl] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -43,7 +45,7 @@ function PaymentPage() {
         return
       }
 
-      const response = await fetch(`http://localhost:8000/api/payments/create/`, {
+      const response = await fetch(`${API_BASE_URL}/api/payments/create/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

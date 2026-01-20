@@ -4,6 +4,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import ProductCard from '../components/ProductCard'
 import Notification from '../components/Notification'
+import API_BASE_URL from '../apiConfig'
 
 function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([])
@@ -54,7 +55,7 @@ function HomePage() {
 
   const fetchFeaturedProducts = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/products/')
+      const response = await fetch(`${API_BASE_URL}/api/products/`)
       if (response.ok) {
         const data = await response.json()
         const products = data.results || data

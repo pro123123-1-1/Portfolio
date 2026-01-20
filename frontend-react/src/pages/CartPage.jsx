@@ -4,6 +4,8 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Notification from '../components/Notification'
 
+import API_BASE_URL from '../apiConfig'
+
 function CartPage() {
   const [cart, setCart] = useState([])
   const [notification, setNotification] = useState({ isVisible: false, message: '', type: 'info', persist: false })
@@ -23,7 +25,7 @@ function CartPage() {
       if (savedCart.length === 0) return
 
       try {
-        const response = await fetch('http://localhost:8000/api/products/')
+        const response = await fetch(`${API_BASE_URL}/api/products/`)
         if (response.ok) {
           const data = await response.json()
           const products = data.results || data
@@ -241,7 +243,7 @@ function CartPage() {
 
                     try {
                       // First, create the order
-                      const orderResponse = await fetch('http://localhost:8000/api/orders/', {
+                      const orderResponse = await fetch(`${API_BASE_URL}/api/orders/`, {
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',

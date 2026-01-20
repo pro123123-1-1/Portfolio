@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useNavigate } from 'react-router-dom'
+import API_BASE_URL from '../apiConfig'
 
 function ProfilePage() {
     const navigate = useNavigate()
@@ -29,7 +30,7 @@ function ProfilePage() {
                 return
             }
 
-            const response = await fetch('http://localhost:8000/api/auth/profile/', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/profile/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -75,7 +76,7 @@ function ProfilePage() {
 
         try {
             const token = localStorage.getItem('access_token')
-            const response = await fetch('http://localhost:8000/api/auth/profile/', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/profile/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
