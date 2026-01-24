@@ -93,7 +93,7 @@ class Farm(models.Model):
     image = models.ImageField(upload_to='farms/', blank=True, null=True)  # صورة المزرعة
     image_url = models.TextField(max_length=500, default=DEFAULT_IMAGE_URL, blank=True, null=True)
     daily_capacity = models.IntegerField(
-        default=0,
+        default=50,
         validators=[MinValueValidator(0)],
         blank=True,
         null=True,
