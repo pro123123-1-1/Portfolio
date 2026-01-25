@@ -234,46 +234,27 @@ class ProductViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
     def get_queryset(self):
-        queryset = Product.objects.all()
-        
-        # If user is authenticated, they should access their own products regardless of availability
-        if self.request.user.is_authenticated:
-            # Show if available OR if user owns the farm
-            # We filter by farm__owner directly
-            queryset = queryset.filter(
-                Q(is_available=True) | 
-                Q(farm__owner=self.request.user)
-            ).distinct()
-        else:
-            queryset = queryset.filter(is_available=True)
-        
+        queryset = Product.objects.filter(is_available=True)
         # Allow filtering by farm
         farm_id = self.request.query_params.get('farm', None)
         if farm_id:
-            queryset = queryset.filter(farm=farm_id)
-            
+            queryset = queryset.filter(farm_id=farm_id)
         return queryset
-
+    
     def perform_create(self, serializer):
-        user = self.request.user
-        farm_id = self.request.data.get('farm')
-        farm = None
-
-        if farm_id:
-            # Verify the user owns this farm
-            farm = user.farms.filter(id=farm_id).first()
-        
-        if not farm:
-            # Fallback to the first farm if no specific farm requested or not found
-            farm = user.farms.first()
-
-        # Debug: Force is_available to True if provided as 'true' string or just set it
-        is_available = self.request.data.get('is_available')
-        if is_available == 'true' or is_available == True:
-            serializer.save(farm=farm, is_available=True)
-        else:
-            serializer.save(farm=farm)
-
+        # Only farmers can create products
+        if not self.request.user.is_farmer:
+            raise permissions.PermissionDenied(
+                "Only farmers can create products"
+            )
+        # Check if user has at least one farm
+        if not self.request.user.farms.exists():
+            raise permissions.PermissionDenied(
+                "You must create a farm first"
+            )
+        # Use the first farm (or you can let user choose)
+        serializer.save(farm=self.request.user.farms.first())
+    
     def perform_update(self, serializer):
         # Only farm owner can update
         if serializer.instance.farm.owner != self.request.user:
@@ -288,8 +269,8 @@ class ProductViewSet(viewsets.ModelViewSet):
             raise permissions.PermissionDenied(
                 "You can only delete products from your own farm"
             )
-        # Hard delete - actually remove the record
-        instance.delete()
+        instance.is_available = False
+        instance.save()
 
 
 # Order Views
