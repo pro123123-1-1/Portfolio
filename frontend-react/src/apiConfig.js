@@ -1,3 +1,2 @@
-const API_BASE_URL = 'https://portfolio-b5wx.onrender.com';
-export default API_BASE_URL;
+const API_BASE_URL = 'https://portfolio-124f.onrender.com';
 export default API_BASE_URL;
