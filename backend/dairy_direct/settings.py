@@ -19,7 +19,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me-in-production')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -72,16 +72,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'dairy_direct.wsgi.application'
 
 # Database
+import dj_database_url
+
+# Database
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DATABASE_NAME"),
-        "USER": os.getenv("DATABASE_USER"),
-        "PASSWORD": os.getenv("DATABASE_PASSWORD"),
-        "HOST": os.getenv("DATABASE_HOST", "127.0.0.1"),
-        "PORT": os.getenv("DATABASE_PORT", "5432"),
-        "OPTIONS": {"connect_timeout": 5},
-    }
+    "default": dj_database_url.config(
+        # Use local Postgres variables as default if DATABASE_URL is not set (e.g. locally)
+        default=f"postgres://{os.getenv('DATABASE_USER', 'postgres')}:{os.getenv('DATABASE_PASSWORD', 'password')}@{os.getenv('DATABASE_HOST', 'localhost')}:{os.getenv('DATABASE_PORT', '5432')}/{os.getenv('DATABASE_NAME', 'dairy_db')}",
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=False  # Set to True only if you are sure Render requires it (usually handled automatically by dj_database_url with https schemes)
+    )
 }
 
 # Password validation
@@ -170,4 +171,4 @@ MOYASAR_SECRET_KEY = os.getenv('MOYASAR_SECRET_KEY', '')
 MOYASAR_PUBLISHABLE_KEY = os.getenv('MOYASAR_PUBLISHABLE_KEY', '')
 
 # Frontend URL for redirects
-FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3001')
