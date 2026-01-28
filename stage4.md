@@ -109,3 +109,12 @@ Unit tests failed during collection due to missing `model-bakery`.
 ```bash
 pip install model-bakery
 pip freeze > requirements.txt
+```
+
+![API Tests Passed](https://github.com/Abdullah-aldafas/Portfolio/blob/main/i1.jpeg)
+
+![Coverage Report](https://github.com/Abdullah-aldafas/Portfolio/blob/main/i2.jpeg)
+
+![Unit Tests Passed](https://github.com/Abdullah-aldafas/Portfolio/blob/main/i3.jpeg)
+
+
