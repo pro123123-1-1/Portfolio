@@ -1,0 +1,39 @@
+# ======================
+# Python / Django
+# ======================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+
+# Django cache
+backend/**/__pycache__/
+
+# ======================
+# Node / Frontend
+# ======================
+node_modules/
+dist/
+dist-ssr/
+
+# ======================
+# Environment files
+# ======================
+.env
+.env.*
+
+# ======================
+# OS / Editor files
+# ======================
+.DS_Store
+.vscode/
+.idea/
+
+# Python virtual environment
+.venv/
+
+# Pytest / Coverage
+.coverage
+.pytest_cache/
+htmlcov/
