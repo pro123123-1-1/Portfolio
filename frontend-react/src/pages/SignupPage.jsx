@@ -17,6 +17,7 @@ function SignupPage() {
     role: roleFromUrl === 'farmer' ? 'farmer' : 'consumer'
   })
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
