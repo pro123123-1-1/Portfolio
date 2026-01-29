@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import API_BASE_URL from '../apiConfig'
 
 function ContactPage() {
   const [formData, setFormData] = useState({
@@ -21,17 +22,18 @@ function ContactPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     // هنا يمكن إضافة كود إرسال النموذج إلى الخادم
+    setLoading(true)
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/contact/', {
+      const response = await fetch(`${API_BASE_URL}/api/contact/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData)
       })
-      
+
       if (response.ok) {
         setSubmitted(true)
         setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
@@ -48,7 +50,7 @@ function ContactPage() {
   return (
     <>
       <Header />
-      
+
       {/* Hero Section */}
       <section style={{
         background: 'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
@@ -84,7 +86,7 @@ function ContactPage() {
               boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
             }}>
               <h2 className="section-title" style={{ textAlign: 'right', fontSize: '1.8rem' }}>معلومات التواصل</h2>
-              
+
               <div style={{
                 display: 'flex',
                 alignItems: 'flex-start',

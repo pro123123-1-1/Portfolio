@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Header from '../components/Header'
+import Header from '../components/Header'
 import Footer from '../components/Footer'
+import API_BASE_URL from '../apiConfig'
 
 function LoginPage() {
   const [email, setEmail] = useState('')
@@ -78,7 +80,7 @@ function LoginPage() {
     }
 
     try {
-      const response = await fetch('/api/auth/login/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

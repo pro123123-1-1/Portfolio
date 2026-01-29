@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useNavigate } from 'react-router-dom'
+import API_BASE_URL from '../apiConfig'
 
 function OrdersPage() {
     const navigate = useNavigate()
@@ -43,14 +44,14 @@ function OrdersPage() {
 
             try {
                 // 1. Fetch Profile to distinguish orders
-                const profileRes = await fetch('/api/auth/profile/', {
+                const profileRes = await fetch(`${API_BASE_URL}/api/auth/profile/`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 const profileData = await profileRes.json()
                 setProfile(profileData)
 
                 // 2. Fetch Orders
-                const response = await fetch('/api/orders/', {
+                const response = await fetch(`${API_BASE_URL}/api/orders/`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
 
@@ -74,7 +75,7 @@ function OrdersPage() {
         setUpdatingStatus(orderId)
         try {
             const token = localStorage.getItem('access_token')
-            const response = await fetch(`/api/orders/${orderId}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

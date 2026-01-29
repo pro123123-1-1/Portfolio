@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import Header from '../components/Header'
+import Header from '../components/Header'
 import Footer from '../components/Footer'
+import API_BASE_URL from '../apiConfig'
 
 function SignupPage() {
   const [searchParams] = useSearchParams()
@@ -39,8 +41,9 @@ function SignupPage() {
     const is_farmer = formData.role === 'farmer'
     const is_consumer = formData.role === 'consumer'
 
+    setLoading(true) // Added setLoading(true)
     try {
-      const response = await fetch('/api/auth/register/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register/`, { // Updated fetch URL
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

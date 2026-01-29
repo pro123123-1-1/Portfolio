@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { useNotification } from '../context/NotificationContext'
+import API_BASE_URL from '../apiConfig'
 import { useState, useEffect } from 'react'
 
 function Header() {
@@ -12,12 +14,18 @@ function Header() {
     setIsLoggedIn(!!token)
 
     if (token) {
-      fetch('/api/auth/profile/', { headers: { 'Authorization': `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(data => {
-          if (data.role === 'farmer' || data.is_farmer) setIsFarmer(true)
-        })
-        .catch(() => { })
+      const fetchProfile = async () => {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/auth/profile/`, { headers: { 'Authorization': `Bearer ${token}` } })
+          if (response.ok) {
+            const data = await response.json()
+            if (data.role === 'farmer' || data.is_farmer) setIsFarmer(true)
+          }
+        } catch (error) {
+          console.error("Failed to fetch profile:", error)
+        }
+      }
+      fetchProfile()
     }
 
     // Function to update cart count from localStorage
